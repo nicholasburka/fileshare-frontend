@@ -52,7 +52,7 @@ export default {
       console.log(url)
         axios.get(url, { responseType: 'blob' })
           .then(response => {
-            const blob = new Blob([response.data], { type: 'application/pdf' })
+            const blob = new Blob([response.data], { type: 'application/' + label.substr(label.length - 4) })
             const link = document.createElement('a')
             link.href = URL.createObjectURL(blob)
             link.download = label
