@@ -5,7 +5,13 @@
     </div>
     <div id="files" v-else>
       <div class="file" :key="file" v-for="file in fileNames">
-        <p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>
+        <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
+        <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
+        <a
+          class="file"
+          :href="baseURL + file"
+          v-text="file"
+          @click.prevent="downloadItem({url: baseURL + file, label: file})" />
       </div>
     </div>
   </div>
@@ -13,6 +19,7 @@
 
 <script>
 import {mapState} from 'vuex'
+import * as axios from 'axios'
 
 export default {
   name: 'App',
@@ -34,8 +41,25 @@ export default {
   },
   data: function() {
     return {
+      baseURL: 'https://f000.backblazeb2.com/file/parnhash/'
       //clicked: {}
     }
+  },
+  methods: {
+    //https://stackoverflow.com/questions/53772331/vue-html-js-how-to-download-a-file-to-browser-using-the-download-tag
+    downloadItem ({ url, label }) {
+
+      console.log(url)
+        axios.get(url, { responseType: 'blob' })
+          .then(response => {
+            const blob = new Blob([response.data], { type: 'application/pdf' })
+            const link = document.createElement('a')
+            link.href = URL.createObjectURL(blob)
+            link.download = label
+            link.click()
+            URL.revokeObjectURL(link.href)
+          }).catch(console.error)
+      }
   },
   created() {
     this.$store.dispatch('getFiles')
@@ -65,6 +89,7 @@ export default {
   height: 10vw;
   width: 100%;
   align-self: center;
+  color: yellow;
 }
 .file:hover {
   transition: 1s;
