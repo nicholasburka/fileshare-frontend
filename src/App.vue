@@ -4,7 +4,7 @@
       <p>loading...</p>
     </div>
     <div id="files" v-else>
-      <div class="file" :key="file" v-for="file in fileNames">
+      <div class="file" :key="file" v-for="file in currentFiles">
         <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
         <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
         <a
@@ -14,6 +14,11 @@
           @click.prevent="downloadItem({url: baseURL + file, label: file})" />
       </div>
     </div>
+    <p class="bottom" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>
+    <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
+    <p class="button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)">Search</p>
+    <p class="button" id="dismissSearch" v-on:click="$store.commit('dismissSearch', search)">Dismiss</p>
+    <p class="bottom" v-on:click="$store.commit('nextFiles')" id="next">Next</p>
   </div>
 </template>
 
@@ -29,7 +34,8 @@ export default {
     ...mapState({
       loading: state => state.loadingFiles,
       files: state => state.files,
-      fileNames: state => state.fileNames
+      fileNames: state => state.fileNames,
+      currentFiles: state => state.currentFiles
     }),
     clicked: function() {
       var clicked = {}
@@ -41,7 +47,8 @@ export default {
   },
   data: function() {
     return {
-      baseURL: 'https://f000.backblazeb2.com/file/parnhash/'
+      baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
+      search: ''
       //clicked: {}
     }
   },
@@ -74,16 +81,22 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  background-color: black;
 }
 #files {
+  position: absolute;
   display: flex;
   flex-direction: column;
   width: 90vw;
+  max-width: 90vw;
   left: 5vw;
-  top: 15vh;
+  top: 5vh;
   height: 80vh;
   justify-content: flex-start;
+  overflow-y: auto;
 }
 .file {
   height: 10vw;
@@ -94,11 +107,62 @@ export default {
 }
 .file:hover {
   transition: 1s;
-  color: white;
+  color: black;
 }
 .clicked {
   animation: glow 2s repeat;
 }
+.bottom {
+  position: absolute;
+  top: 90vh;
+  max-height: 5vh;
+  display: flex;
+  align-items: center;
+  transition: color .4s;
+}
+.bottom:hover {
+  transition: 1s;
+  color: purple;
+}
+#prev {
+  left: min(5vw, 5vh);
+  max-width: 8vw;
+  font-size: min(4vw, 4vh);
+}
+#next {
+  left: min(89vw, calc(100vw - 9vh));
+  max-width: 8vw;
+  font-size: min(4vw, 4vh);
+}
+#searchField {
+  position: absolute;
+  top: 90vh;
+  left: 30vw;
+  width: 40vw;
+  height: 3vh;
+  text-align: center;
+}
+.button {
+  background-color: hsla(300,100,100,10);
+  transition: color .4s;
+}
+.button:hover {
+  transition: 1s;
+  color: orange;
+}
+#submitSearch {
+  position: absolute;
+  top: 92vh;
+  left: 38vw;
+  width: 10vw;
+}
+#dismissSearch {
+  position: absolute;
+  top: 92vh;
+  left: 52vw;
+  width: 10vw;
+}
+
 @keyframes glow {
   0% {
     color: white;
