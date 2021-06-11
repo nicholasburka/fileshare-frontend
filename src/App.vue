@@ -89,7 +89,8 @@ export default {
   height: 10vw;
   width: 100%;
   align-self: center;
-  color: yellow;
+  text-decoration: none;
+  color: purple;
 }
 .file:hover {
   transition: 1s;
