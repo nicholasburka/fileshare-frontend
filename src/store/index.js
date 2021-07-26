@@ -9,6 +9,7 @@ const maxNumFiles = 10000
 export default new Vuex.Store({
   state: {
 	loadingFiles: true,
+	attemptCounter: 0,
 	files: [],
 	numToDisplay: 50,
 	fileIndex: 0,
@@ -56,7 +57,7 @@ export default new Vuex.Store({
 	}
   },
   actions: {
-	async getFiles({commit}) {
+	async getFiles({state, commit, dispatch}) {
 		try {
 			commit('setLoadingFiles')
 			console.log('getting files')
@@ -68,6 +69,9 @@ export default new Vuex.Store({
 			//.filter((file) => (file.indexOf('.bzEmpty') === -1))
 			console.log(parsed_json)
 			commit('setFiles', files)
+			if (files.length < 1 && state.attemptCounter < 3) {
+				dispatch('getFiles')
+			}
 		} catch (err) {
 			console.log(err)
 		}
