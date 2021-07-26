@@ -1,8 +1,11 @@
 <template>
   <div id="app">
+    <a href="https://www.chrisbankscarr.com/">
+    <img id="logo" src="//images.squarespace-cdn.com/content/v1/5fdc1dd2ff99f865bfeb9467/1608267602186-4JQBHLKKKIV3PQAHY4DC/mockup+name.png?format=1000w"/>
+    </a>
     <div v-if="loading">
       <p>loading...</p>
-    </div>
+    </div>    
     <div id="files" v-else>
       <div class="file" :key="file" v-for="file in currentFiles">
         <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
@@ -75,16 +78,24 @@ export default {
 </script>
 
 <style>
+#logo {
+  position: absolute;
+  top: 3vh;
+  left: 3vw;
+  width: 20vw;
+  height: auto;
+  z-index: 15;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: white;/*#2c3e50;*/
   max-width: 100vw;
   max-height: 100vh;
   margin: 0;
-  background-color: black;
+  background-color: white;
 }
 #files {
   position: absolute;
