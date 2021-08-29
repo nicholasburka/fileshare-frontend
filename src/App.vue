@@ -15,6 +15,8 @@
           :href="baseURL + file"
           v-text="file"
           @click.prevent="downloadItem({url: baseURL + file, label: file})" />
+        <mini-audio class="mini-audio" :audio-source="baseURL + file"></mini-audio>
+        <!--<mini-audio audio-source="https://f000.backblazeb2.com/file/parnhash/B Who I Want 2 B - Sophie.mp3"></mini-audio>-->
       </div>
     </div>
     <p class="bottom" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>
@@ -101,12 +103,12 @@ export default {
   position: absolute;
   display: flex;
   flex-direction: column;
-  width: 90vw;
-  max-width: 90vw;
-  left: 5vw;
+  width: 100vw;
+  /*max-width: 90vw;*/
+  /*left: 5vw;*/
   top: 5vh;
   height: 80vh;
-  justify-content: flex-start;
+  justify-content: center;
   overflow-y: auto;
 }
 .file {
@@ -172,6 +174,15 @@ export default {
   top: 92vh;
   left: 52vw;
   width: 10vw;
+}
+.mini-audio {
+  position: relative;
+  width: 30vw;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  left: 34.5vw;
+  max-height: 10vh !important;
+  max-width: 30vw !important;
 }
 
 @keyframes glow {
