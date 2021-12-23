@@ -15,7 +15,8 @@
           :href="baseURL + file"
           v-text="file"
           @click.prevent="downloadItem({url: baseURL + file, label: file})" />
-        <mini-audio class="mini-audio" :audio-source="baseURL + file"></mini-audio>
+        <!--<mini-audio class="mini-audio" :audio-source="baseURL + file"></mini-audio>-->
+        <mini-audio class="mini-audio" :id="file" v-on:click="loadAudioSource(file)"></mini-audio>
         <!--<mini-audio audio-source="https://f000.backblazeb2.com/file/parnhash/B Who I Want 2 B - Sophie.mp3"></mini-audio>-->
       </div>
     </div>
@@ -61,8 +62,10 @@ export default {
     //https://stackoverflow.com/questions/53772331/vue-html-js-how-to-download-a-file-to-browser-using-the-download-tag
     downloadItem ({ url, label }) {
 
-      console.log(url)
-        axios.get(url, { responseType: 'blob' })
+      console.log(url);
+      window.open(url, '_blank').focus();
+      //open url in new tab
+        /*axios.get(url, { responseType: 'blob' })
           .then(response => {
             const blob = new Blob([response.data], { type: 'application/' + label.substr(label.length - 4) })
             const link = document.createElement('a')
@@ -70,8 +73,11 @@ export default {
             link.download = label
             link.click()
             URL.revokeObjectURL(link.href)
-          }).catch(console.error)
-      }
+          }).catch(console.error)*/
+      },
+    loadAudioSource (url) {
+      //
+    }
   },
   created() {
     this.$store.dispatch('getFiles')
@@ -93,7 +99,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: white;/*#2c3e50;*/
+  /*color: white;*//*#2c3e50;*/
   max-width: 100vw;
   max-height: 100vh;
   margin: 0;
@@ -157,6 +163,7 @@ export default {
 }
 .button {
   background-color: hsla(300,100,100,10);
+  color: black;
   transition: color .4s;
 }
 .button:hover {
@@ -187,7 +194,7 @@ export default {
 
 @keyframes glow {
   0% {
-    color: white;
+    color: black;
   }
   50% {
     color: purple;
