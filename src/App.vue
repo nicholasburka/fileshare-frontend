@@ -15,8 +15,8 @@
           :href="baseURL + file"
           v-text="file"
           @click.prevent="downloadItem({url: baseURL + file, label: file})" />
-        <!--<mini-audio class="mini-audio" :audio-source="baseURL + file"></mini-audio>-->
-        <mini-audio class="mini-audio" :id="file" v-on:click="loadAudioSource(file)"></mini-audio>
+        <mini-audio class="mini-audio" :preload="false" :audio-source="baseURL + file"></mini-audio>
+        <!--<mini-audio class="mini-audio" :id="file" v-on:click="loadAudioSource(file)"></mini-audio>-->
         <!--<mini-audio audio-source="https://f000.backblazeb2.com/file/parnhash/B Who I Want 2 B - Sophie.mp3"></mini-audio>-->
       </div>
     </div>
@@ -30,7 +30,7 @@
 
 <script>
 import {mapState} from 'vuex'
-import * as axios from 'axios'
+//import * as axios from 'axios'
 
 export default {
   name: 'App',
@@ -41,7 +41,8 @@ export default {
       loading: state => state.loadingFiles,
       files: state => state.files,
       fileNames: state => state.fileNames,
-      currentFiles: state => state.currentFiles
+      currentFiles: state => state.currentFiles,
+      numPages: state => state.files.length/state.numToDisplay
     }),
     clicked: function() {
       var clicked = {}
@@ -63,6 +64,7 @@ export default {
     downloadItem ({ url, label }) {
 
       console.log(url);
+      console.log(label);
       window.open(url, '_blank').focus();
       //open url in new tab
         /*axios.get(url, { responseType: 'blob' })
@@ -76,7 +78,7 @@ export default {
           }).catch(console.error)*/
       },
     loadAudioSource (url) {
-      //
+      console.log(url);
     }
   },
   created() {
