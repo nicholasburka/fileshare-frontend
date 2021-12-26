@@ -2,7 +2,7 @@
   <div id="app">
     <a href="https://www.chrisbankscarr.com/">
     <img id="logo" src="//images.squarespace-cdn.com/content/v1/5fdc1dd2ff99f865bfeb9467/1608267602186-4JQBHLKKKIV3PQAHY4DC/mockup+name.png?format=1000w"/>
-    <link rel="stylesheet" type="text/css" href="/icofont/icofont.min.css">
+    <link rel="stylesheet" type="text/css" href="./icofont/icofont.min.css">
     </a>
     <div v-if="loading">
       <p>loading...</p>
