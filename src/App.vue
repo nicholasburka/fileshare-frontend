@@ -124,10 +124,16 @@ export default {
       const full_src = this.baseURL + url;
       const url_filetype = url.substr(url.length - 3, url.length);
       var filetype_html = '';
-      if (url_filetype === 'wav') {
-        filetype_html = 'audio/x-wav';
-      } else {
-        filetype_html = "audio/" + url.substr(url.length - 3, url.length);
+      switch (url_filetype) {
+        case 'wav':
+          filetype_html = 'audio/x-wav';
+          break;
+        case 'mp3':
+          filetype_html = 'audio/mpeg';
+          break;
+        default:
+          console.log('unrec filetype');
+          filetype_html = "audio/" + url.substr(url.length - 3, url.length);
       }
       console.log('full src: ' + full_src);
       console.log(filetype_html);
