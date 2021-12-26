@@ -139,8 +139,12 @@ export default {
       console.log(player);
 
       source.src = full_src;
-      source.type = url_filetype;
+      source.type = filetype_html;
       player_el.appendChild(source);
+      player_el.autoplay = true;
+      player_el.oncanplay = () => {
+        player_el.play();
+      };
 
       player.source = {
         type: 'audio',
