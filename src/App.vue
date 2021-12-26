@@ -113,7 +113,7 @@ export default {
       console.log(spinner.$el)
       console.log(this.$refs[url + 'loading'][0]);
       if (this.song_loading) {
-        this.$refs[this.loading + 'loading'][0].removeChild(spinner.$el);
+        this.$refs[this.song_loading + 'loading'][0].removeChild(spinner.$el);
       }
       this.$refs[url + 'loading'][0].appendChild(spinner.$el);
       this.song_loading = url;
@@ -156,6 +156,7 @@ export default {
       player_el.oncanplay = () => {
         player_el.play();
         this.$refs[url + 'loading'][0].removeChild(spinner.$el);
+        this.song_loading = '';
         
         if (this.song_playing) {
           var last_play_button = document.getElementById(this.song_playing + 'play');
