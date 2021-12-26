@@ -77,7 +77,8 @@ export default {
   data: function() {
     return {
       baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
-      search: ''
+      search: '',
+      playing: ''
       //clicked: {}
     }
   },
@@ -140,10 +141,19 @@ export default {
 
       source.src = full_src;
       source.type = filetype_html;
-      player_el.appendChild(source);
+      player_el.replaceChildren(source);
       player_el.autoplay = true;
       player_el.oncanplay = () => {
         player_el.play();
+        this.$refs[url + 'loading'][0].removeChild(spinner.$el);
+        
+        if (this.playing) {
+          var last_play_button = document.getElementById(this.playing + 'play');
+          last_play_button.classList.remove('playing');
+        }
+        play_button.classList.add('playing');
+        file_div.appendChild(play_button);
+        this.playing = url;
       };
 
       player.source = {
@@ -164,7 +174,9 @@ export default {
         console.log(event);
         player.play();
         this.$refs[url + 'loading'][0].removeChild(spinner.$el);
+        play_button.classList.add('playing');
         file_div.appendChild(play_button);
+        this.playing = url;
       });
       
       //var audio_player = document.createElement('div');//new AudioClass();//document.createElement('mini-audio');
@@ -281,6 +293,10 @@ a {
   height: var(--size);
   font-size: var(--size);
   top: 1vh;
+}
+.playing {
+  transition: .5s;
+  filter: invert(50%);
 }
 .song-left {
   margin-right: 1vh;
