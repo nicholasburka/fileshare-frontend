@@ -6,6 +6,7 @@ Vue.use(Vuex)
 //import axios from 'axios'
 const maxNumFiles = 10000
 
+
 export default new Vuex.Store({
   state: {
 	loadingFiles: true,
@@ -20,6 +21,7 @@ export default new Vuex.Store({
 	setFiles(state, files) {
 		state.files = files
 		state.fileNames = files.map((file) => file.fileName).filter((file) => (file.indexOf('.bzEmpty') === -1))
+		//only need to percent encode on downloads state.fileNames = fileNames.map((file) => cleanSpaces(file))
 		state.currentFiles = state.fileNames.slice(0, state.numToDisplay)
 		state.loadingFiles = false
 	},

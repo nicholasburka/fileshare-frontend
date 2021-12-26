@@ -2,35 +2,57 @@
   <div id="app">
     <a href="https://www.chrisbankscarr.com/">
     <img id="logo" src="//images.squarespace-cdn.com/content/v1/5fdc1dd2ff99f865bfeb9467/1608267602186-4JQBHLKKKIV3PQAHY4DC/mockup+name.png?format=1000w"/>
+    <link rel="stylesheet" type="text/css" href="/icofont/icofont.min.css">
     </a>
     <div v-if="loading">
       <p>loading...</p>
-    </div>    
-    <div id="files" v-else>
-      <div class="file" :key="file" v-for="file in currentFiles">
-        <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
-        <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
-        <a
-          class="file"
-          :href="baseURL + file"
-          v-text="file"
-          @click.prevent="downloadItem({url: baseURL + file, label: file})" />
-        <mini-audio class="mini-audio" :preload="false" :audio-source="baseURL + file"></mini-audio>
-        <!--<mini-audio class="mini-audio" :id="file" v-on:click="loadAudioSource(file)"></mini-audio>-->
-        <!--<mini-audio audio-source="https://f000.backblazeb2.com/file/parnhash/B Who I Want 2 B - Sophie.mp3"></mini-audio>-->
-      </div>
     </div>
-    <p class="bottom" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>
-    <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
-    <p class="button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)">Search</p>
-    <p class="button" id="dismissSearch" v-on:click="$store.commit('dismissSearch', search)">Dismiss</p>
-    <p class="bottom" v-on:click="$store.commit('nextFiles')" id="next">Next</p>
+    <div v-else>
+      <div id="nav">
+        <p class="nav" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>
+        <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
+        <p class="button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)">Search</p>
+        <p class="button" id="dismissSearch" v-on:click="$store.commit('dismissSearch', search)">Dismiss</p>
+        <p class="nav" v-on:click="$store.commit('nextFiles')" id="next">Next</p>
+      </div>
+      <div id="files">
+        <div class="file" :key="file" v-for="file in currentFiles" :id="file">
+          <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
+          <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
+          <!--<button class="icofont-play" v-on:click="loadAudioSource(file)"></button>-->
+          <i class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)"></i>
+          <i class="" :id="file + 'loading'" :ref="file + 'loading'" />
+          <a
+            class="file"
+            :href="baseURL + file"
+            v-text="file"
+            @click.prevent="downloadItem({url: file, label: file})" />
+          <mini-audio class="mini-audio audio-off" :ref="file + 'player'" :preload="false" :audio-source="baseURL + file"></mini-audio>
+          <!--<mini-audio class="mini-audio" :id="file" v-on:click="loadAudioSource(file)"></mini-audio>-->
+          <!--<mini-audio audio-source="https://f000.backblazeb2.com/file/parnhash/B Who I Want 2 B - Sophie.mp3"></mini-audio>-->
+        </div>
+      </div>
+        <div id="player-div">
+            <audio id="player" controls crossorigin>
+            </audio>
+        </div>
+    </div>
   </div>
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState} from 'vuex' //access state variables from the vuex 'store'
 //import * as axios from 'axios'
+import Spinner from './components/Spinner.vue' //vue css loading icon
+//import VueAudio from 'vue-audio-better'
+import Vue from 'vue' //front-end web development framework
+
+import Plyr from 'plyr' //web audio player
+const player = new Plyr('#player');
+
+//https://css-tricks.com/creating-vue-js-component-instances-programmatically/
+var SpinnerClass = Vue.extend(Spinner);
+//var AudioClass = Vue.extend(VueAudio);
 
 export default {
   name: 'App',
@@ -65,7 +87,7 @@ export default {
 
       console.log(url);
       console.log(label);
-      window.open(url, '_blank').focus();
+      window.open(this.baseURL + encodeURIComponent(url), '_blank').focus();
       //open url in new tab
         /*axios.get(url, { responseType: 'blob' })
           .then(response => {
@@ -79,6 +101,65 @@ export default {
       },
     loadAudioSource (url) {
       console.log(url);
+      //var loading = document.getElementById(url + "loading");
+      //loading.className = "lds-spinner"
+      var spinner = new SpinnerClass();
+      spinner.$mount();
+      //document.body.appendChild(spinner.$el);
+      console.log(spinner.$el)
+      console.log(this.$refs[url + 'loading'][0]);
+      this.$refs[url + 'loading'][0].appendChild(spinner.$el);
+      var file_div = document.getElementById(url);
+      var play_button = document.getElementById(url + 'play')
+      file_div.removeChild(play_button);
+      //var audio_player = this.$refs[url + 'player'][0];
+      //audio_player.$el.classList.remove('audio-off');
+      //audio_player.play();
+      //console.log(audio_player);
+      /*var player = document.getElementById('player');
+      var source = document.createElement('source');
+      source.src = baseURL + url;
+      source.type = "audio/" + url.substr(4);
+      player.appendChild(source);*/
+      const full_src = this.baseURL + url;
+      const file_type_html = "audio/" + url.substr(url.length - 3, url.length);
+      console.log('full src: ' + full_src);
+      console.log(file_type_html);
+      console.log(player);
+      player.source = {
+        type: 'audio',
+        /*sources: player.sources.push({
+          src: full_src,
+          type: file_type_html
+        })*/
+        sources: [
+          {
+            src: full_src,
+            type: file_type_html
+          }
+        ]
+      };
+      player.on('canplay', (event) => {
+        console.log(event);
+        player.play();
+        this.$refs[url + 'loading'][0].removeChild(spinner.$el);
+        file_div.appendChild(play_button);
+      })
+      
+      //var audio_player = document.createElement('div');//new AudioClass();//document.createElement('mini-audio');
+      //audio_player.innerHTML = "<mini-audio :autoplay='true' :audio-source='" + this.baseURL + url + "'></mini-audio>"
+      //audio_player.$mount();
+      //audio_player.className = "mini-audio";
+      //audio_player["audio-source"] = this.baseURL + url;
+      console.log(file_div);
+      //console.log(audio_player);
+      //file_div.appendChild(audio_player);
+      //loading icon
+      //create player
+      //set autoplay of player to true
+      //loop settimeout 
+      //if playing
+      //remove gif
     }
   },
   created() {
@@ -95,6 +176,9 @@ export default {
   width: 20vw;
   height: auto;
   z-index: 15;
+}
+a {
+  font-size: var(--size);
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -114,10 +198,71 @@ export default {
   width: 100vw;
   /*max-width: 90vw;*/
   /*left: 5vw;*/
-  top: 5vh;
-  height: 80vh;
+  top: 20vh;
+  height: 65vh;
   justify-content: center;
   overflow-y: auto;
+}
+.nav {
+  position: absolute;
+  top: 0vh;
+  padding-top: 2vh;
+  max-height: 20vh;
+  display: flex;
+  align-items: center;
+  transition: color .4s;
+}
+.nav:hover {
+  transition: 1s;
+  color: purple;
+}
+#player-div {
+  position: absolute;
+  top: 85vh;
+  left: 40vw;
+  max-height: 14vh;
+}
+#prev {
+  left: 30vw;
+  top: 4vh;
+  max-width: 8vw;
+  font-size: var(--size);
+}
+#next {
+  left: 68vw;
+  top: 4vh;
+  max-width: 8vw;
+  font-size: var(--size);
+}
+#searchField {
+  position: absolute;
+  left: 30vw;
+  width: 40vw;
+  height: 3vh;
+  text-align: center;
+}
+#submitSearch {
+  position: absolute;
+  top: 4vh;
+  left: 38vw;
+  width: 10vw;
+}
+#dismissSearch {
+  position: absolute;
+  top: 4vh;
+  left: 52vw;
+  width: 10vw;
+}
+.audio-off {
+  display: none !important;
+}
+.play-icon {
+  height: var(--size);
+  font-size: var(--size);
+  top: 1vh;
+}
+.song-left {
+  margin-right: 1vh;
 }
 .file {
   height: 10vw;
@@ -133,36 +278,6 @@ export default {
 .clicked {
   animation: glow 2s repeat;
 }
-.bottom {
-  position: absolute;
-  top: 90vh;
-  max-height: 5vh;
-  display: flex;
-  align-items: center;
-  transition: color .4s;
-}
-.bottom:hover {
-  transition: 1s;
-  color: purple;
-}
-#prev {
-  left: min(5vw, 5vh);
-  max-width: 8vw;
-  font-size: min(4vw, 4vh);
-}
-#next {
-  left: min(89vw, calc(100vw - 9vh));
-  max-width: 8vw;
-  font-size: min(4vw, 4vh);
-}
-#searchField {
-  position: absolute;
-  top: 90vh;
-  left: 30vw;
-  width: 40vw;
-  height: 3vh;
-  text-align: center;
-}
 .button {
   background-color: hsla(300,100,100,10);
   color: black;
@@ -172,18 +287,7 @@ export default {
   transition: 1s;
   color: orange;
 }
-#submitSearch {
-  position: absolute;
-  top: 92vh;
-  left: 38vw;
-  width: 10vw;
-}
-#dismissSearch {
-  position: absolute;
-  top: 92vh;
-  left: 52vw;
-  width: 10vw;
-}
+
 .mini-audio {
   position: relative;
   width: 30vw;
