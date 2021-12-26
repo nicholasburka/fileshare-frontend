@@ -80,7 +80,8 @@ export default {
     return {
       baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
       search: '',
-      playing: ''
+      playing: '',
+      loading: ''
       //clicked: {}
     }
   },
@@ -111,7 +112,12 @@ export default {
       //document.body.appendChild(spinner.$el);
       console.log(spinner.$el)
       console.log(this.$refs[url + 'loading'][0]);
+      if (this.loading) {
+        this.$refs[this.loading + 'loading'][0].removeChild(spinner.$el);
+      }
       this.$refs[url + 'loading'][0].appendChild(spinner.$el);
+      this.loading = url;
+
       var file_div = document.getElementById(url + 'icon-holder');
       var play_button = document.getElementById(url + 'play')
       file_div.removeChild(play_button);
@@ -304,7 +310,7 @@ div .icon-holder {
 .playing {
   transition: .5s;
   /*filter: invert(100%);*/
-  animation: 1s linear infinite playing;
+  animation: 3s linear infinite playing;
 }
 @keyframes playing {
   0% {
