@@ -142,6 +142,8 @@ export default {
       source.src = full_src;
       source.type = filetype_html;
       player_el.replaceChildren(source);
+      player_el.pause();
+      player_el.load();
       player_el.autoplay = true;
       player_el.oncanplay = () => {
         player_el.play();
