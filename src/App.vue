@@ -122,9 +122,15 @@ export default {
       source.type = "audio/" + url.substr(4);
       player.appendChild(source);*/
       const full_src = this.baseURL + url;
-      const file_type_html = "audio/" + url.substr(url.length - 3, url.length);
+      const url_filetype = url.substr(url.length - 3, url.length);
+      var filetype_html = '';
+      if (url_filetype === 'wav') {
+        filetype_html = 'audio/x-wav';
+      } else {
+        filetype_html = "audio/" + url.substr(url.length - 3, url.length);
+      }
       console.log('full src: ' + full_src);
-      console.log(file_type_html);
+      console.log(filetype_html);
       console.log(player);
       player.source = {
         type: 'audio',
@@ -135,11 +141,12 @@ export default {
         sources: [
           {
             src: full_src,
-            type: file_type_html
+            type: filetype_html
           }
         ]
       };
       player.on('canplay', (event) => {
+        console.log('can play');
         console.log(event);
         player.play();
         this.$refs[url + 'loading'][0].removeChild(spinner.$el);
@@ -151,7 +158,7 @@ export default {
       //audio_player.$mount();
       //audio_player.className = "mini-audio";
       //audio_player["audio-source"] = this.baseURL + url;
-      console.log(file_div);
+      //console.log(file_div);
       //console.log(audio_player);
       //file_div.appendChild(audio_player);
       //loading icon
