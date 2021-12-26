@@ -116,11 +116,10 @@ export default {
       //audio_player.$el.classList.remove('audio-off');
       //audio_player.play();
       //console.log(audio_player);
-      /*var player = document.getElementById('player');
+      var player_el = document.getElementById('player');
       var source = document.createElement('source');
-      source.src = baseURL + url;
-      source.type = "audio/" + url.substr(4);
-      player.appendChild(source);*/
+      
+      
       const full_src = this.baseURL + url;
       const url_filetype = url.substr(url.length - 3, url.length);
       var filetype_html = '';
@@ -138,6 +137,11 @@ export default {
       console.log('full src: ' + full_src);
       console.log(filetype_html);
       console.log(player);
+
+      source.src = full_src;
+      source.type = url_filetype;
+      player_el.appendChild(source);
+
       player.source = {
         type: 'audio',
         /*sources: player.sources.push({
@@ -157,7 +161,7 @@ export default {
         player.play();
         this.$refs[url + 'loading'][0].removeChild(spinner.$el);
         file_div.appendChild(play_button);
-      })
+      });
       
       //var audio_player = document.createElement('div');//new AudioClass();//document.createElement('mini-audio');
       //audio_player.innerHTML = "<mini-audio :autoplay='true' :audio-source='" + this.baseURL + url + "'></mini-audio>"
