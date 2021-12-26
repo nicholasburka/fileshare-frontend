@@ -80,8 +80,8 @@ export default {
     return {
       baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
       search: '',
-      playing: '',
-      loading: ''
+      song_playing: '',
+      song_loading: ''
       //clicked: {}
     }
   },
@@ -112,11 +112,11 @@ export default {
       //document.body.appendChild(spinner.$el);
       console.log(spinner.$el)
       console.log(this.$refs[url + 'loading'][0]);
-      if (this.loading) {
+      if (this.song_loading) {
         this.$refs[this.loading + 'loading'][0].removeChild(spinner.$el);
       }
       this.$refs[url + 'loading'][0].appendChild(spinner.$el);
-      this.loading = url;
+      this.song_loading = url;
 
       var file_div = document.getElementById(url + 'icon-holder');
       var play_button = document.getElementById(url + 'play')
@@ -157,13 +157,13 @@ export default {
         player_el.play();
         this.$refs[url + 'loading'][0].removeChild(spinner.$el);
         
-        if (this.playing) {
-          var last_play_button = document.getElementById(this.playing + 'play');
+        if (this.song_playing) {
+          var last_play_button = document.getElementById(this.song_playing + 'play');
           last_play_button.classList.remove('playing');
         }
         play_button.classList.add('playing');
         file_div.appendChild(play_button);
-        this.playing = url;
+        this.song_playing = url;
       };
 
       player.source = {
@@ -186,7 +186,7 @@ export default {
         this.$refs[url + 'loading'][0].removeChild(spinner.$el);
         play_button.classList.add('playing');
         file_div.appendChild(play_button);
-        this.playing = url;
+        this.song_playing = url;
       });
       
       //var audio_player = document.createElement('div');//new AudioClass();//document.createElement('mini-audio');
@@ -212,6 +212,9 @@ export default {
 </script>
 
 <style>
+:root {
+  --size: min(4vh, 2.5vw);
+}
 #logo {
   position: absolute;
   top: 3vh;
@@ -243,7 +246,7 @@ a {
   /*left: 5vw;*/
   top: 20vh;
   height: 65vh;
-  justify-content: center;
+  justify-content: space-evenly;
   overflow-y: auto;
 }
 .nav {
