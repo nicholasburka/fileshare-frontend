@@ -20,8 +20,10 @@
           <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
           <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
           <!--<button class="icofont-play" v-on:click="loadAudioSource(file)"></button>-->
-          <i class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)"></i>
-          <i class="" :id="file + 'loading'" :ref="file + 'loading'" />
+          <div :id="file + 'icon-holder'" :ref="file + 'icon-holder'">
+            <i class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)"></i>
+            <i class="" :id="file + 'loading'" :ref="file + 'loading'" />
+          </div>
           <a
             class="file"
             :href="baseURL + file"
@@ -110,7 +112,7 @@ export default {
       console.log(spinner.$el)
       console.log(this.$refs[url + 'loading'][0]);
       this.$refs[url + 'loading'][0].appendChild(spinner.$el);
-      var file_div = document.getElementById(url);
+      var file_div = document.getElementById(url + 'icon-holder');
       var play_button = document.getElementById(url + 'play')
       file_div.removeChild(play_button);
       //var audio_player = this.$refs[url + 'player'][0];
@@ -298,7 +300,16 @@ a {
 }
 .playing {
   transition: .5s;
-  filter: invert(50%);
+  /*filter: invert(100%);*/
+  animation: 1s linear infinite playing;
+}
+@keyframes playing {
+  0% {
+    filter: invert(0%);
+  }
+  50% {
+    filter: invert(100%);
+  }
 }
 .song-left {
   margin-right: 1vh;
