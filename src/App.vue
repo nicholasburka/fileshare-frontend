@@ -146,7 +146,7 @@ export default {
       var source = document.createElement('source');
       
       
-      const full_src = this.baseURL + url;
+      const full_src = this.baseURL + encodeURIComponent(url);
       const url_filetype = url.substr(url.length - 3, url.length);
       var filetype_html = '';
       switch (url_filetype) {
