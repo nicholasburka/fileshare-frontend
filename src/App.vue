@@ -346,19 +346,20 @@ audio {
   position: absolute;
   left: 25vw;
   width: 50vw;
-  height: 12vh;
+  height: 10vh;
   text-align: center;
+  font-size: min(6vh, 8vw);
 }
 #submitSearch {
   position: absolute;
-  font-size: min(10vh, 11vw);
-  top: 3.5vh;
-  left: calc(75vw + min(5vh, 3vw));
+  font-size: min(8vh, 9vw);
+  top: 2.5vh;
+  left: calc(75vw + min(5vh, 4vw));
 }
 #dismissSearch {
   position: absolute;
-  font-size: min(10vh, 11vw);
-  top: 4vh;
+  font-size: min(8vh, 9vw);
+  top: 2.5vh;
   left: calc(75vw + min(15vh, 15vw));
 }
 .audio-off {
