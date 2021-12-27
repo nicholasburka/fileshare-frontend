@@ -274,7 +274,7 @@ a {
   /*max-width: 90vw;*/
   /*left: 5vw;*/
   top: 20vh;
-  height: 65vh;
+  height: 60vh;
   justify-content: space-evenly;
   overflow-y: auto;
 }
@@ -299,7 +299,7 @@ div .icon-holder {
 }
 #player-div {
   position: absolute;
-  top: 85vh;
+  top: 80vh;
   left: 5vw;
   max-height: 14vh;
 }
