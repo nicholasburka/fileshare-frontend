@@ -305,7 +305,7 @@ a {
   width: 96vw;
   /*max-width: 90vw;*/
   /*left: 5vw;*/
-  top: 27vh;
+  top: 20vh;
   height: 55vh;
   justify-content: space-evenly;
   overflow-y: auto;
@@ -358,7 +358,7 @@ audio {
 #file-count {
   position: absolute;
   text-align: center;
-  top: calc(10.5vh + min(1.5vh,3.5vw));
+  top: calc(10.5vh - min(3.5vh,5.5vw));
   left: 5vw;
   width: 90vw;
   color: rgb(195,68,122);
@@ -369,7 +369,8 @@ audio {
   position: absolute;
   left: 30vw;
   width: 40vw;
-  height: 7vh;
+  height: 6vh;
+  top: 1vh;
   text-align: center;
   font-size: min(6vh, 8vw);
 }
@@ -387,11 +388,15 @@ audio {
 }
 @media (max-width: 500px) {
   #file-count {
-    top: calc(8.5vh + min(4vh,4vw));
+    top: calc(7.5vh + min(4vh,4vw));
   }
   #submitSearch {
+    left: calc(73vw + min(5vh, 4vw));
   }
   #dismissSearch {
+    left: calc(84vw + min(5vh, 4vw));
+  }
+  #player-div {
   }
 }
 .audio-off {
