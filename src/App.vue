@@ -328,7 +328,8 @@ div .icon-holder {
 .playing {
   transition: .5s;
   /*filter: invert(100%);*/
-  animation: 3s linear infinite playing;
+  color: yellow;
+  animation: 5s linear infinite playing;
 }
 @keyframes playing {
   0% {
