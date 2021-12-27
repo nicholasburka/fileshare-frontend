@@ -391,12 +391,13 @@ audio {
     top: calc(7.5vh + min(4vh,4vw));
   }
   #submitSearch {
-    left: calc(73vw + min(5vh, 4vw));
+    left: calc(75vw + min(5vh, 4vw));
   }
   #dismissSearch {
-    left: calc(84vw + min(5vh, 4vw));
+    left: calc(86vw + min(5vh, 4vw));
   }
   #player-div {
+    top: 73vh;
   }
 }
 .audio-off {
