@@ -103,6 +103,9 @@ export default {
             URL.revokeObjectURL(link.href)
           }).catch(console.error)*/
       },
+    toPlayState (url) {
+      this.$refs[url + 'icon-holder'].replaceChildren()
+    },
     loadAudioSource (url) {
       console.log(url);
       //var loading = document.getElementById(url + "loading");
@@ -112,15 +115,18 @@ export default {
       //document.body.appendChild(spinner.$el);
       console.log(spinner.$el)
       console.log(this.$refs[url + 'loading'][0]);
+
       if (this.song_loading) {
-        this.$refs[this.song_loading + 'loading'][0].removeChild(spinner.$el);
+        this.$refs[this.song_loading + 'loading'][0].innerHTML = '';
+        this.$refs[this.song_loading + 'play'][0].classList.remove('playing');
+        this.$refs[this.song_loading + 'play'][0].classList.remove('off');
       }
       this.$refs[url + 'loading'][0].appendChild(spinner.$el);
       this.song_loading = url;
 
       var file_div = document.getElementById(url + 'icon-holder');
-      var play_button = document.getElementById(url + 'play')
-      file_div.removeChild(play_button);
+      var play_button = document.getElementById(url + 'play');
+      play_button.classList.add('off');
       //var audio_player = this.$refs[url + 'player'][0];
       //audio_player.$el.classList.remove('audio-off');
       //audio_player.play();
@@ -155,15 +161,18 @@ export default {
       player_el.autoplay = true;
       player_el.oncanplay = () => {
         player_el.play();
+        
         this.$refs[url + 'loading'][0].removeChild(spinner.$el);
         this.song_loading = '';
+
+        play_button.classList.add('playing');
+        play_button.classList.remove('off');
         
         if (this.song_playing) {
           var last_play_button = document.getElementById(this.song_playing + 'play');
           last_play_button.classList.remove('playing');
         }
-        play_button.classList.add('playing');
-        file_div.appendChild(play_button);
+        
         this.song_playing = url;
       };
 
@@ -249,6 +258,9 @@ a {
   height: 65vh;
   justify-content: space-evenly;
   overflow-y: auto;
+}
+.off {
+  display: none;
 }
 .nav {
   position: absolute;
