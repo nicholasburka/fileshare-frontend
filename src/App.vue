@@ -158,7 +158,7 @@ export default {
           break;
         default:
           console.log('unrec filetype');
-          filetype_html = "audio/" + url.substr(url.length - 3, url.length);
+          filetype_html = "audio/x-" + url.substr(url.length - 3, url.length);
       }
       console.log('full src: ' + full_src);
       console.log(filetype_html);
