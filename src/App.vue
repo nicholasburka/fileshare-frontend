@@ -177,6 +177,10 @@ export default {
         
         this.song_playing = url;
       };
+      player_el.onended = () => {
+        //play_button.classList.remove('playing');
+        //this.song_playing = '';
+      }
 
       player.source = {
         type: 'audio',
@@ -341,7 +345,10 @@ audio {
    color: white;
   }
   50% {
-    filter: green;
+    color: green;
+  }
+  100% {
+    color: white;
   }
 }
 .song-left {
