@@ -313,7 +313,7 @@ div .icon-holder {
 }
 #player-div {
   position: absolute;
-  top: 80vh;
+  top: 78vh;
   left: 5vw;
   max-height: 14vh;
 }
@@ -327,26 +327,26 @@ audio {
 #prev {
   font-size: min(10vh, 10vw);
   left: calc(22vw - min(3vh,3vw));
-  top: 13vh;
+  top: 10vh;
 }
 #next {
   font-size: min(10vh, 10vw);
   left: calc(78vw - min(3vh,3vw));
-  top: 13vh;
+  top: 10vh;
 }
 #file-count {
   position: absolute;
   text-align: center;
-  top: calc(12.5vh + min(1.5vh,3.5vw));
+  top: calc(10.5vh + min(1.5vh,3.5vw));
   width: 100vw;
   color: rgb(195,68,122);
   font-size: min(4vh,4vw);
 }
 #searchField {
   position: absolute;
-  left: 25vw;
-  width: 50vw;
-  height: 10vh;
+  left: 30vw;
+  width: 40vw;
+  height: 7vh;
   text-align: center;
   font-size: min(6vh, 8vw);
 }
