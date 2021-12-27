@@ -116,6 +116,11 @@ export default {
       console.log(spinner.$el)
       console.log(this.$refs[url + 'loading'][0]);
 
+      if (this.song_playing) {
+        var last_play_button = document.getElementById(this.song_playing + 'play');
+        last_play_button.classList.remove('playing');
+      }
+
       if (this.song_loading) {
         this.$refs[this.song_loading + 'loading'][0].innerHTML = '';
         this.$refs[this.song_loading + 'play'][0].classList.remove('playing');
@@ -123,6 +128,8 @@ export default {
       }
       this.$refs[url + 'loading'][0].appendChild(spinner.$el);
       this.song_loading = url;
+
+
 
       var file_div = document.getElementById(url + 'icon-holder');
       var play_button = document.getElementById(url + 'play');
@@ -167,11 +174,6 @@ export default {
 
         play_button.classList.add('playing');
         play_button.classList.remove('off');
-        
-        if (this.song_playing) {
-          var last_play_button = document.getElementById(this.song_playing + 'play');
-          last_play_button.classList.remove('playing');
-        }
         
         this.song_playing = url;
       };
