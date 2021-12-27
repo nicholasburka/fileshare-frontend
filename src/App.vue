@@ -225,7 +225,7 @@ export default {
 
 <style>
 :root {
-  --size: min(4vh, 2.5vw);
+  --size: min(4vh, 4vw);
 }
 #logo {
   position: absolute;
@@ -237,6 +237,8 @@ export default {
 }
 a {
   font-size: var(--size);
+  overflow-wrap: break-word;
+  inline-size: 100%;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -283,8 +285,12 @@ div .icon-holder {
 #player-div {
   position: absolute;
   top: 85vh;
-  left: 40vw;
+  left: 5vw;
   max-height: 14vh;
+}
+audio {
+  width: 90vw;
+  height: 12vh;
 }
 #prev {
   left: 30vw;
@@ -328,15 +334,14 @@ div .icon-holder {
 .playing {
   transition: .5s;
   /*filter: invert(100%);*/
-  color: yellow;
   animation: 5s linear infinite playing;
 }
 @keyframes playing {
   0% {
-    filter: invert(0%);
+   color: white;
   }
   50% {
-    filter: invert(100%);
+    filter: green;
   }
 }
 .song-left {
