@@ -1,10 +1,10 @@
 <template>
   <div id="app">
+    <link rel="stylesheet" type="text/css" href="./icofont/icofont.min.css">
     <a href="https://www.chrisbankscarr.com/">
     <img id="logo" src="//images.squarespace-cdn.com/content/v1/5fdc1dd2ff99f865bfeb9467/1608267602186-4JQBHLKKKIV3PQAHY4DC/mockup+name.png?format=1000w"/>
-    <link rel="stylesheet" type="text/css" href="./icofont/icofont.min.css">
     </a>
-    <div v-if="loading">
+    <div v-if="!loaded">
       <p>loading...</p>
     </div>
     <div v-else>
@@ -21,8 +21,8 @@
           <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
           <!--<button class="icofont-play" v-on:click="loadAudioSource(file)"></button>-->
           <div class="icon-holder" :id="file + 'icon-holder'" :ref="file + 'icon-holder'">
-            <i class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)"></i>
-            <i class="" :id="file + 'loading'" :ref="file + 'loading'" />
+            <span class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)" alt="play"></span>
+            <span class="" :id="file + 'loading'" :ref="file + 'loading'" alt="loading"></span>
           </div>
           <a
             class="file"
@@ -62,7 +62,7 @@ export default {
   },
   computed: {
     ...mapState({
-      loading: state => state.loadingFiles,
+      loading_files: state => state.loadingFiles,
       files: state => state.files,
       fileNames: state => state.fileNames,
       currentFiles: state => state.currentFiles,
@@ -74,10 +74,14 @@ export default {
         clicked[file] = false
       })
       return clicked
+    },
+    loaded: function() {
+      return (!this.loading && !this.loading_files);
     }
   },
   data: function() {
     return {
+      loading: true,
       baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
       search: '',
       song_playing: '',
@@ -179,8 +183,10 @@ export default {
       };
       player_el.onended = () => {
         //play_button.classList.remove('playing');
+        //play_button.classList.add('paused');
         //this.song_playing = '';
-      }
+      };
+      //player_el.
 
       player.source = {
         type: 'audio',
@@ -223,6 +229,11 @@ export default {
   },
   created() {
     this.$store.dispatch('getFiles')
+  },
+  mounted() {
+    this.$nextTick(function() {
+      this.loading = false;
+    })
   }
 }
 </script>
@@ -339,6 +350,10 @@ audio {
   transition: .5s;
   /*filter: invert(100%);*/
   animation: 5s linear infinite playing;
+}
+.paused {
+  transition: .5s;
+  color: green;
 }
 @keyframes playing {
   0% {
