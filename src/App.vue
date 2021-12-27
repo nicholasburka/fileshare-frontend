@@ -9,11 +9,16 @@
     </div>
     <div v-else>
       <div id="nav">
-        <p class="nav" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>
+        <!--<p class="nav" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>-->
+        <span class="nav icofont-arrow-left button page-button" id="prev" v-on:click="$store.commit('prevFiles')"></span>
+
         <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
-        <p class="button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)">Search</p>
-        <p class="button" id="dismissSearch" v-on:click="$store.commit('dismissSearch', search)">Dismiss</p>
-        <p class="nav" v-on:click="$store.commit('nextFiles')" id="next">Next</p>
+        <span class="icofont-search button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)"></span>
+        <span class="icofont-close-line button" id="dismissSearch" v-on:click="dismissSearch()"></span>
+        <!--<p class="button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)">Search</p>-->
+        <!--<p class="button" id="dismissSearch" v-on:click="$store.commit('dismissSearch', search)">Dismiss</p>-->
+        <span class="nav icofont-arrow-right button page-button" id="next" v-on:click="$store.commit('nextFiles')"></span>
+        <!--<p class="nav" v-on:click="$store.commit('nextFiles')" id="next">Next</p>-->
       </div>
       <div id="files">
         <div class="file" :key="file" v-for="file in currentFiles" :id="file">
@@ -91,6 +96,10 @@ export default {
   },
   methods: {
     //https://stackoverflow.com/questions/53772331/vue-html-js-how-to-download-a-file-to-browser-using-the-download-tag
+    dismissSearch() {
+      this.search = '';
+      this.$store.commit('dismissSearch', this.search);
+    },
     downloadItem ({ url, label }) {
 
       console.log(url);
@@ -273,8 +282,8 @@ a {
   width: 100vw;
   /*max-width: 90vw;*/
   /*left: 5vw;*/
-  top: 20vh;
-  height: 60vh;
+  top: 25vh;
+  height: 55vh;
   justify-content: space-evenly;
   overflow-y: auto;
 }
@@ -286,12 +295,13 @@ a {
   top: 0vh;
   padding-top: 2vh;
   max-height: 20vh;
+  font-size: 10vh;
   display: flex;
   align-items: center;
   transition: color .4s;
 }
 .nav:hover {
-  transition: 1s;
+  transition: .3s;
   color: purple;
 }
 div .icon-holder {
@@ -307,36 +317,35 @@ audio {
   width: 90vw;
   height: 12vh;
 }
+.page-button {
+
+}
 #prev {
   left: 30vw;
-  top: 4vh;
-  max-width: 8vw;
-  font-size: var(--size);
+  top: 15vh;
 }
 #next {
-  left: 68vw;
-  top: 4vh;
-  max-width: 8vw;
-  font-size: var(--size);
+  left: calc(70vw - 10vh);
+  top: 15vh;
 }
 #searchField {
   position: absolute;
-  left: 30vw;
-  width: 40vw;
-  height: 3vh;
+  left: 25vw;
+  width: 50vw;
+  height: 12vh;
   text-align: center;
 }
 #submitSearch {
   position: absolute;
-  top: 4vh;
-  left: 38vw;
-  width: 10vw;
+  font-size: 10vh;
+  top: 3.5vh;
+  left: 67vw;
 }
 #dismissSearch {
   position: absolute;
+  font-size: 10vh;
   top: 4vh;
-  left: 52vw;
-  width: 10vw;
+  left: 71.5vw;
 }
 .audio-off {
   display: none !important;
