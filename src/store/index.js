@@ -61,21 +61,22 @@ export default new Vuex.Store({
   actions: {
 	async getFiles({state, commit, dispatch}) {
 		try {
-			commit('setLoadingFiles')
-			console.log('getting files')
-			const res = await fetch('https://chris-fileshare.herokuapp.com/files')
-			console.log(res)
+			commit('setLoadingFiles');
+			console.log('getting files');
+			const res = await fetch('https://chris-fileshare.herokuapp.com/files');
+			console.log(res);
 			const parsed_json = await res.json();
-			const files = parsed_json.files
-			console.log(files)
+			var files = parsed_json.files;
+			console.log(files);
 			//.filter((file) => (file.indexOf('.bzEmpty') === -1))
-			console.log(parsed_json)
-			commit('setFiles', files)
+			console.log(parsed_json);
+			files = files.filter((file) => (file.fileName.indexOf('.bzEmpty') === -1))
+			commit('setFiles', files);
 			if (files.length < 1 && state.attemptCounter < 3) {
-				dispatch('getFiles')
+				dispatch('getFiles');
 			}
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 		}
 	},
 
@@ -89,6 +90,11 @@ export default new Vuex.Store({
 		} catch(err) {
 			console.log(err)
 		}
+	}
+  },
+  getters: {
+	numFiles: state => {
+		return state.files.length;
 	}
   },
   modules: {

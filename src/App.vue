@@ -9,14 +9,18 @@
     </div>
     <div v-else>
       <div id="nav">
-        <!--<p class="nav" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>-->
-        <span class="nav icofont-arrow-left button page-button" id="prev" v-on:click="$store.commit('prevFiles')"></span>
+        
 
         <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
         <span class="icofont-search button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)"></span>
         <span class="icofont-close-line button" id="dismissSearch" v-on:click="dismissSearch()"></span>
         <!--<p class="button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)">Search</p>-->
         <!--<p class="button" id="dismissSearch" v-on:click="$store.commit('dismissSearch', search)">Dismiss</p>-->
+
+
+        <!--<p class="nav" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>-->
+        <span class="nav icofont-arrow-left button page-button" id="prev" v-on:click="$store.commit('prevFiles')"></span>
+        <p id="file-count" v-if="loaded">showing {{currentFiles.length}} of {{$store.getters.numFiles}} files</p>
         <span class="nav icofont-arrow-right button page-button" id="next" v-on:click="$store.commit('nextFiles')"></span>
         <!--<p class="nav" v-on:click="$store.commit('nextFiles')" id="next">Next</p>-->
       </div>
@@ -282,7 +286,7 @@ a {
   width: 100vw;
   /*max-width: 90vw;*/
   /*left: 5vw;*/
-  top: 25vh;
+  top: 27vh;
   height: 55vh;
   justify-content: space-evenly;
   overflow-y: auto;
@@ -321,12 +325,22 @@ audio {
 
 }
 #prev {
-  left: 30vw;
-  top: 15vh;
+  font-size: min(10vh, 10vw);
+  left: calc(22vw - min(3vh,3vw));
+  top: 13vh;
 }
 #next {
-  left: calc(70vw - 10vh);
-  top: 15vh;
+  font-size: min(10vh, 10vw);
+  left: calc(78vw - min(3vh,3vw));
+  top: 13vh;
+}
+#file-count {
+  position: absolute;
+  text-align: center;
+  top: calc(12.5vh + min(1.5vh,3.5vw));
+  width: 100vw;
+  color: rgb(195,68,122);
+  font-size: min(4vh,4vw);
 }
 #searchField {
   position: absolute;
@@ -337,15 +351,15 @@ audio {
 }
 #submitSearch {
   position: absolute;
-  font-size: 10vh;
+  font-size: min(10vh, 11vw);
   top: 3.5vh;
-  left: 67vw;
+  left: calc(75vw + min(5vh, 3vw));
 }
 #dismissSearch {
   position: absolute;
-  font-size: 10vh;
+  font-size: min(10vh, 11vw);
   top: 4vh;
-  left: 71.5vw;
+  left: calc(75vw + min(15vh, 15vw));
 }
 .audio-off {
   display: none !important;
