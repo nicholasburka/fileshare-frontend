@@ -19,9 +19,9 @@
 
 
         <!--<p class="nav" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>-->
-        <span class="nav icofont-arrow-left button page-button" id="prev" v-on:click="$store.commit('prevFiles')"></span>
+        <span class="nav icofont-arrow-left button page-button" id="prev" :ref="'prev'" v-on:click="$store.commit('prevFiles')"></span>
         <p id="file-count" v-if="loaded">showing {{currentFiles.length}} of {{$store.getters.numFiles}} files</p>
-        <span class="nav icofont-arrow-right button page-button" id="next" v-on:click="$store.commit('nextFiles')"></span>
+        <span class="nav icofont-arrow-right button page-button" id="next" :ref="'next'" v-on:click="$store.commit('nextFiles')"></span>
         <!--<p class="nav" v-on:click="$store.commit('nextFiles')" id="next">Next</p>-->
       </div>
       <div id="files">
@@ -244,9 +244,27 @@ export default {
     this.$store.dispatch('getFiles')
   },
   mounted() {
+    //console.log('mounted');
     this.$nextTick(function() {
+      //console.log('mounted next tick');
       this.loading = false;
+      //too early in vue lifecycle for file count check
     })
+  },
+  updated() {
+    //console.log('updated');
+    if (this.currentFiles.length === this.$store.getters.numFiles) {
+      console.log('displaying all files');
+      //console.log(this.$refs['prev']);
+      //console.log(this.$refs);
+      //document.getElementById('prev').classList.add('off');
+      //document.getElementById('next').classList.add('off');
+      this.$refs['prev'].classList.add('off');
+      this.$refs['next'].classList.add('off');
+    } else {
+      //console.log(this.currentFiles.length);
+      //console.log(this.$store.getters.numFiles);
+    }
   }
 }
 </script>
@@ -283,7 +301,8 @@ a {
   position: absolute;
   display: flex;
   flex-direction: column;
-  width: 100vw;
+  left: 2vw;
+  width: 96vw;
   /*max-width: 90vw;*/
   /*left: 5vw;*/
   top: 27vh;
@@ -292,7 +311,7 @@ a {
   overflow-y: auto;
 }
 .off {
-  display: none;
+  display: none !important;
 }
 .nav {
   position: absolute;
@@ -328,19 +347,23 @@ audio {
   font-size: min(10vh, 10vw);
   left: calc(22vw - min(3vh,3vw));
   top: 10vh;
+  z-index: 1;
 }
 #next {
   font-size: min(10vh, 10vw);
-  left: calc(78vw - min(3vh,3vw));
+  left: calc(78vw - min(5vh,5vw));
   top: 10vh;
+  z-index: 1;
 }
 #file-count {
   position: absolute;
   text-align: center;
   top: calc(10.5vh + min(1.5vh,3.5vw));
-  width: 100vw;
+  left: 5vw;
+  width: 90vw;
   color: rgb(195,68,122);
   font-size: min(4vh,4vw);
+  z-index: -1;
 }
 #searchField {
   position: absolute;
@@ -354,13 +377,22 @@ audio {
   position: absolute;
   font-size: min(8vh, 9vw);
   top: 2.5vh;
-  left: calc(75vw + min(5vh, 4vw));
+  left: calc(72vw + min(5vh, 4vw));
 }
 #dismissSearch {
   position: absolute;
   font-size: min(8vh, 9vw);
   top: 2.5vh;
-  left: calc(75vw + min(15vh, 15vw));
+  left: calc(73vw + min(15vh, 15vw));
+}
+@media (max-width: 500px) {
+  #file-count {
+    top: calc(8.5vh + min(4vh,4vw));
+  }
+  #submitSearch {
+  }
+  #dismissSearch {
+  }
 }
 .audio-off {
   display: none !important;
