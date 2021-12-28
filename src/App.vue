@@ -241,7 +241,8 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getFiles')
+    this.$store.dispatch('getFiles');
+    setTimeout(() => {if (this.loading) {location.reload()}}, 60000);
   },
   mounted() {
     //console.log('mounted');
