@@ -15,14 +15,28 @@ export default new Vuex.Store({
 	numToDisplay: 50,
 	fileIndex: 0,
 	currentFiles: [],
+	currentFolders: [],
+	currentFolderFiles: {},
+	currentDir: '',
 	fileNames: []
   },
   mutations: {
 	setFiles(state, files) {
+		//console.log(newDir);
+		//state.currentDir = newDir;
 		state.files = files
 		state.fileNames = files.map((file) => file.fileName).filter((file) => (file.indexOf('.bzEmpty') === -1))
 		//only need to percent encode on downloads state.fileNames = fileNames.map((file) => cleanSpaces(file))
+		//to get current files
+		//filter out only the files within the current directory (as shown by current prefix === currentDir)
+		//type each file into folder, music, video, pdf [if untyped (the default type), then client only allows download] 
+		//state.folders = files.filter((file) => (file.fileName.indexOf('/') > -1))
+		//give each
+		//get folder names within current dir
+		//folders.map
+		//slice only the ones in range of num to display
 		state.currentFiles = state.fileNames.slice(0, state.numToDisplay)
+
 		state.loadingFiles = false
 	},
 	prevFiles(state) {
@@ -60,6 +74,7 @@ export default new Vuex.Store({
   },
   actions: {
 	async getFiles({state, commit, dispatch}) {
+		state.attemptCounter = state.attemptCounter + 1
 		try {
 			commit('setLoadingFiles');
 			console.log('getting files');
@@ -77,6 +92,9 @@ export default new Vuex.Store({
 			}
 		} catch (err) {
 			console.log(err);
+			if (files.length < 1 && state.attemptCounter < 3) {
+				dispatch('getFiles');
+			}
 		}
 	},
 

@@ -10,13 +10,11 @@
     <div v-else>
       <div id="nav">
         
-
         <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
         <span class="icofont-search button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)"></span>
         <span class="icofont-close-line button" id="dismissSearch" v-on:click="dismissSearch()"></span>
         <!--<p class="button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)">Search</p>-->
         <!--<p class="button" id="dismissSearch" v-on:click="$store.commit('dismissSearch', search)">Dismiss</p>-->
-
 
         <!--<p class="nav" v-on:click="$store.commit('prevFiles')" id="prev">Prev</p>-->
         <span class="nav icofont-arrow-left button page-button" id="prev" :ref="'prev'" v-on:click="$store.commit('prevFiles')"></span>
@@ -24,8 +22,9 @@
         <span class="nav icofont-arrow-right button page-button" id="next" :ref="'next'" v-on:click="$store.commit('nextFiles')"></span>
         <!--<p class="nav" v-on:click="$store.commit('nextFiles')" id="next">Next</p>-->
       </div>
-      <div id="files">
-        <div class="file" :key="file" v-for="file in currentFiles" :id="file">
+
+      <div id="files" class="column">
+        <div class="file row" :key="file" v-for="file in currentFiles" :id="file">
           <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
           <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
           <!--<button class="icofont-play" v-on:click="loadAudioSource(file)"></button>-->
@@ -42,6 +41,22 @@
           <!--<mini-audio class="mini-audio" :id="file" v-on:click="loadAudioSource(file)"></mini-audio>-->
           <!--<mini-audio audio-source="https://f000.backblazeb2.com/file/parnhash/B Who I Want 2 B - Sophie.mp3"></mini-audio>-->
         </div>
+        <!--
+        <div class="file" :key="file" v-for="file in currentFiles" :id="file">
+          
+          <div class="icon-holder" :id="file.url + 'icon-holder'" :ref="file.url + 'icon-holder'">
+            <span class="icofont-play play-icon song-left" :id="file.url + 'play'" :ref="file.url + 'play'" v-on:click="loadAudioSource(file)" alt="play"></span>
+            <span class="" :id="file.url + 'loading'" :ref="file.url + 'loading'" alt="loading"></span>
+          </div>
+          <a
+            class="file"
+            :href="baseURL + file.url"
+            v-text="file.url"
+            @click.prevent="downloadItem({url: file.url, label: file.url})" />
+          <mini-audio class="mini-audio audio-off" :ref="file.url + 'player'" :preload="false" :audio-source="baseURL + file"></mini-audio>
+      
+        </div>
+        -->
       </div>
         <div id="player-div">
             <audio id="player" controls crossorigin>
@@ -134,8 +149,20 @@ export default {
       console.log(this.$refs[url + 'loading'][0]);
 
       if (this.song_playing) {
+        if (this.song_playing === url) {
+          var curr_player_el = document.getElementById('player');
+          var curr_play_button = document.getElementById(this.song_playing + 'play');
+          if (curr_play_button.classList.contains('playing')) {
+            curr_player_el.pause();
+            curr_play_button.classList.remove('playing');
+            curr_play_button.classList.add('paused');
+          } else {
+            curr_player_el.play();
+          }
+        }
         var last_play_button = document.getElementById(this.song_playing + 'play');
         last_play_button.classList.remove('playing');
+        last_play_button.classList.remove('paused');
       }
 
       if (this.song_loading) {
@@ -242,7 +269,7 @@ export default {
   },
   created() {
     this.$store.dispatch('getFiles');
-    setTimeout(() => {if (this.loading) {location.reload()}}, 60000);
+    setTimeout(() => {if (this.loading) {location.reload()}}, 40000);
   },
   mounted() {
     //console.log('mounted');
@@ -258,10 +285,10 @@ export default {
       console.log('displaying all files');
       //console.log(this.$refs['prev']);
       //console.log(this.$refs);
-      //document.getElementById('prev').classList.add('off');
-      //document.getElementById('next').classList.add('off');
-      this.$refs['prev'].classList.add('off');
-      this.$refs['next'].classList.add('off');
+      document.getElementById('prev').classList.add('off');
+      document.getElementById('next').classList.add('off');
+      //this.$refs['prev'].classList.add('off');
+      //this.$refs['next'].classList.add('off');
     } else {
       //console.log(this.currentFiles.length);
       //console.log(this.$store.getters.numFiles);
@@ -273,6 +300,14 @@ export default {
 <style>
 :root {
   --size: min(4vh, 4vw);
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.column {
+  display: flex;
+  flex-direction: column;
 }
 #logo {
   position: absolute;
@@ -433,14 +468,16 @@ audio {
   margin-right: 1vh;
 }
 .file {
-  height: 10vw;
-  width: 100%;
+  /*height: 10vw;*/
+  margin-left: 0vw;
+  width: 70vw;
   align-self: center;
+  text-align: left;
   text-decoration: none;
   color: purple;
 }
 .file:hover {
-  transition: 1s;
+  transition: .5s;
   color: black;
 }
 .clicked {

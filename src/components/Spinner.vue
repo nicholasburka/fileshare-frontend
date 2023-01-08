@@ -3,9 +3,6 @@
 </template>
 
 <style>
-:root {
-	--size: 4vh;
-}
 .lds-spinner {
   color: green;
   display: inline-block;
