@@ -78,7 +78,7 @@ export default new Vuex.Store({
 		try {
 			commit('setLoadingFiles');
 			console.log('getting files');
-			const res = await fetch('https://chris-fileshare.herokuapp.com/files');
+			const res = await fetch('https://server1.nicholasab.com/files');
 			console.log(res);
 			const parsed_json = await res.json();
 			var files = parsed_json.files;
@@ -102,7 +102,7 @@ export default new Vuex.Store({
 		try {
 			console.log(state.loadingFiles)
 			console.log('downloading a file ' + fileName)
-			const res = await fetch('https://chris-fileshare.herokuapp.com/fileByName?filename=' + fileName)
+			const res = await fetch('https://server1.nicholasab.com/fileByName?filename=' + fileName)
 			console.log(res)
 			//const url = URL.createObjectURL(res)
 		} catch(err) {

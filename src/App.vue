@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <title>chris' files for you</title>
     <link rel="stylesheet" type="text/css" href="./icofont/icofont.min.css">
     <a href="https://www.chrisbankscarr.com/">
     <img id="logo" src="//images.squarespace-cdn.com/content/v1/5fdc1dd2ff99f865bfeb9467/1608267602186-4JQBHLKKKIV3PQAHY4DC/mockup+name.png?format=1000w"/>
@@ -79,6 +80,7 @@ const player = new Plyr('#player');
 //https://css-tricks.com/creating-vue-js-component-instances-programmatically/
 var SpinnerClass = Vue.extend(Spinner);
 //var AudioClass = Vue.extend(VueAudio);
+document.title = "chris' files for you"
 
 export default {
   name: 'App',
@@ -119,10 +121,10 @@ export default {
       this.search = '';
       this.$store.commit('dismissSearch', this.search);
     },
-    downloadItem ({ url, label }) {
-
+    downloadItem ({ url }) { //,label}) {
+      /*console.log("download");
       console.log(url);
-      console.log(label);
+      console.log(label);*/
       window.open(this.baseURL + encodeURIComponent(url), '_blank').focus();
       //open url in new tab
         /*axios.get(url, { responseType: 'blob' })
@@ -138,8 +140,53 @@ export default {
     toPlayState (url) {
       this.$refs[url + 'icon-holder'].replaceChildren()
     },
+    playAudio() {
+      var curr_player_el = document.getElementById('player');
+      curr_player_el.play();
+    },
+    pauseAudio() {
+      var curr_player_el = document.getElementById('player');
+      curr_player_el.pause();
+    },
+    clearLastPlaying() {
+      var last_play_button = document.getElementById(this.song_playing + 'play');
+      last_play_button.classList.remove('playing');
+      last_play_button.classList.remove('paused');
+    },
     loadAudioSource (url) {
+      console.log("load media");
+      var orig_url = url;
       console.log(url);
+
+      const full_src = this.baseURL + encodeURIComponent(url);
+      const url_filetype = url.substr(url.length - 3, url.length);
+      var filetype_html = '';
+      switch (url_filetype) {
+        case 'wav':
+          filetype_html = 'audio/x-wav';
+          break;
+        case 'mp3':
+          filetype_html = 'audio/mpeg';
+          break;
+        /*case 'm4a':
+          filetype_html = "audio/x-m4a";
+          break;*/
+        case 'mp4':
+          this.downloadItem({url: orig_url});
+          this.pauseAudio();
+          this.clearLastPlaying();
+          return;
+        case 'jpg':
+          this.downloadItem({url: orig_url});
+          this.pauseAudio();
+          this.clearLastPlaying();
+          return;
+        default:
+          console.log('unrec filetype');
+          filetype_html = "audio/x-" + url.substr(url.length - 3, url.length);
+          //this.downloadItem(url);
+      }
+
       //var loading = document.getElementById(url + "loading");
       //loading.className = "lds-spinner"
       var spinner = new SpinnerClass();
@@ -150,19 +197,16 @@ export default {
 
       if (this.song_playing) {
         if (this.song_playing === url) {
-          var curr_player_el = document.getElementById('player');
           var curr_play_button = document.getElementById(this.song_playing + 'play');
           if (curr_play_button.classList.contains('playing')) {
-            curr_player_el.pause();
+            this.pauseAudio();
             curr_play_button.classList.remove('playing');
             curr_play_button.classList.add('paused');
           } else {
-            curr_player_el.play();
+            this.playAudio();
           }
         }
-        var last_play_button = document.getElementById(this.song_playing + 'play');
-        last_play_button.classList.remove('playing');
-        last_play_button.classList.remove('paused');
+        this.clearLastPlaying();
       }
 
       if (this.song_loading) {
@@ -186,20 +230,7 @@ export default {
       var source = document.createElement('source');
       
       
-      const full_src = this.baseURL + encodeURIComponent(url);
-      const url_filetype = url.substr(url.length - 3, url.length);
-      var filetype_html = '';
-      switch (url_filetype) {
-        case 'wav':
-          filetype_html = 'audio/x-wav';
-          break;
-        case 'mp3':
-          filetype_html = 'audio/mpeg';
-          break;
-        default:
-          console.log('unrec filetype');
-          filetype_html = "audio/x-" + url.substr(url.length - 3, url.length);
-      }
+      
       console.log('full src: ' + full_src);
       console.log(filetype_html);
       console.log(player);
@@ -300,6 +331,7 @@ export default {
 <style>
 :root {
   --size: min(4vh, 4vw);
+  --icon-size: min(5.5vh,5.5vw);
 }
 .row {
   display: flex;
@@ -343,7 +375,7 @@ a {
   /*left: 5vw;*/
   top: 20vh;
   height: 55vh;
-  justify-content: space-evenly;
+  justify-content: space-between;
   overflow-y: auto;
 }
 .off {
@@ -440,8 +472,8 @@ audio {
   display: none !important;
 }
 .play-icon {
-  height: var(--size);
-  font-size: var(--size);
+  height: var(--icon-size);
+  font-size: var(--icon-size);
   top: 1vh;
 }
 .playing {
