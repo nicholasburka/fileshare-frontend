@@ -2,18 +2,30 @@
   <div id="app">
     <title>chris' files for you</title>
     <link rel="stylesheet" type="text/css" href="./icofont/icofont.min.css">
-    <a href="https://www.chrisbankscarr.com/">
+    <a href="https://files.chrisbankscarr.com/">
     <img id="logo" src="//images.squarespace-cdn.com/content/v1/5fdc1dd2ff99f865bfeb9467/1608267602186-4JQBHLKKKIV3PQAHY4DC/mockup+name.png?format=1000w"/>
     </a>
+    <div v-if="!loaded">
+      <p>loading...</p>
+    </div>
+    <div v-else>
+      <div id="nav">
+        
+        <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
+        <span class="icofont-search button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)"></span>
+        <span class="icofont-close-line button" id="dismissSearch" v-on:click="dismissSearch()"></span>
+        <span class="nav icofont-arrow-left button page-button" id="prev" :ref="'prev'" v-on:click="$store.commit('prevFiles')"></span>
+        <p id="file-count" v-if="loaded">showing {{currentFiles.length}} of {{$store.getters.numFiles}} files</p>
+        <span class="nav icofont-arrow-right button page-button" id="next" :ref="'next'" v-on:click="$store.commit('nextFiles')"></span>
 
-    <div>
+      </div>
 
-      <div id="folders" class="column">
-        <div class="folder row" :key="folder" v-for="folder in folders" :id="folder">
-          <img v-if="folder.img" :src="folder.img">
-          <h2 v-else v-text="folder.name"></h2>
-          <!--
-          <div class="icon-holder" :id="folder + 'icon-holder'" :ref="file + 'icon-holder'">
+      <div id="files" class="column">
+        <div class="file row" :key="file" v-for="file in currentFiles" :id="file">
+          <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
+          <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
+          <!--<button class="icofont-play" v-on:click="loadAudioSource(file)"></button>-->
+          <div class="icon-holder" :id="file + 'icon-holder'" :ref="file + 'icon-holder'">
             <span class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)" alt="play"></span>
             <span class="" :id="file + 'loading'" :ref="file + 'loading'" alt="loading"></span>
           </div>
@@ -22,16 +34,20 @@
             :href="baseURL + file"
             v-text="file"
             @click.prevent="downloadItem({url: file, label: file})" />
-          <mini-audio class="mini-audio audio-off" :ref="file + 'player'" :preload="false" :audio-source="baseURL + file"></mini-audio>-->
+          <mini-audio class="mini-audio audio-off" :ref="file + 'player'" :preload="false" :audio-source="baseURL + file"></mini-audio>
 
         </div>
       </div>
+        <div id="player-div">
+            <audio id="player" controls crossorigin>
+            </audio>
+        </div>
     </div>
   </div>
 </template>
 
 <script>
-//import {mapState} from 'vuex' //access state variables from the vuex 'store'
+import {mapState} from 'vuex' //access state variables from the vuex 'store'
 import Spinner from './components/Spinner.vue' //vue css loading icon
 //import VueAudio from 'vue-audio-better'
 import Vue from 'vue' //front-end web development framework
@@ -44,8 +60,25 @@ var SpinnerClass = Vue.extend(Spinner);
 document.title = "chris' files for you"
 
 export default {
-  name: 'App',
-  components: {
+  props: ["folderName"],
+  computed: {
+    ...mapState({
+      loading_files: state => state.loadingFiles,
+      files: state => state.files,
+      fileNames: state => state.fileNames,
+      currentFiles: state => state.currentFiles,
+      numPages: state => state.files.length/state.numToDisplay
+    }),
+    clicked: function() {
+      var clicked = {}
+      this.files.forEach(file => {
+        clicked[file] = false
+      })
+      return clicked
+    },
+    loaded: function() {
+      return (!this.loading && !this.loading_files);
+    }
   },
   data: function() {
     return {
@@ -53,13 +86,7 @@ export default {
       baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
       search: '',
       song_playing: '',
-      song_loading: '',
-      folders: [{
-        name: "SXSW Music Exchange",
-        img: require('./assets/sxsw-big.png')
-      }, {
-        name: "Chris' files"
-      }]
+      song_loading: ''
       //clicked: {}
     }
   },
@@ -290,7 +317,7 @@ a {
   margin: 0;
   background-color: white;
 }
-#folders {
+#files {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -424,21 +451,18 @@ audio {
 .song-left {
   margin-right: 1vh;
 }
-.folder {
+.file {
   /*height: 10vw;*/
   margin-left: 0vw;
   width: 70vw;
-  max-height: 30vh;
-  height: 30vh;
   align-self: center;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
   color: purple;
 }
-.folder:hover {
+.file:hover {
   transition: .5s;
-  color: white;
-  background-color: maroon;
+  color: black;
 }
 .clicked {
   animation: glow 2s repeat;
