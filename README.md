@@ -1,4 +1,15 @@
-# frontend
+# frontend for indie artist file-sharing webapp
+# live at [files.chrisbankscarr.com](files.chrisbankscarr.com)
+
+Source structure:
+src/
+main.js
+->
+App.vue
+-> 
+FolderContents.vue -> store/index.js, File.vue, Spinner.vue
+
+Other files awaiting refactor
 
 ## Project setup
 ```

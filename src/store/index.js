@@ -7,11 +7,42 @@ Vue.use(Vuex)
 const maxNumFiles = 10000;
 const backendURL = "https://server1.nicholasab.com";
 
+function filenameToJSON(filename) {
+	let title = '';
+	let artist = '';
+	let artistLink = '';
+	if (filename.indexOf('METADATA:') >= 0) {
+		let file = filename.substr('METADATA:'.length)
+		console.log(file)
+		artist = file.substr(file.indexOf('artist:') + 'artist:'.length, file.indexOf('link:') - 'artist:'.length)
+		console.log(file.indexOf('link:'))
+		artistLink = file.substr(file.indexOf('link:') + 'link:'.length, file.indexOf('title:') - 'link:'.length - file.indexOf('link:'))
+		if (artistLink.toLowerCase().indexOf("http") !== 0) {
+			artistLink = "https://" + artistLink;
+		}
+		title = file.substr(file.indexOf('title:') + 'title:'.length)
+		return {
+			file: filename,
+			title: title,
+			artist: artist,
+			artistLink: artistLink
+		}
+	} 
+
+	return {
+		file: filename,
+		title,
+		artist,
+		artistLink
+	}
+}
+
 export default new Vuex.Store({
   state: {
 		loadingFiles: true,
 		attemptCounter: 0,
 		files: [],
+		fileMetadata: {},
 		numToDisplay: 50,
 		fileIndex: 0,
 		currentFiles: [],
@@ -26,6 +57,15 @@ export default new Vuex.Store({
 			//state.currentDir = newDir;
 			state.files = files
 			state.fileNames = files.map((file) => file.fileName).filter((file) => (file.indexOf('.bzEmpty') === -1))
+
+			state.fileNames.forEach((file) => {
+				let meta = filenameToJSON(file)
+				console.log('metadata for ' + file)
+				console.log(meta)
+				state.fileMetadata[file] = filenameToJSON(file)
+			})
+			//decode every file
+
 			//only need to percent encode on downloads state.fileNames = fileNames.map((file) => cleanSpaces(file))
 			//to get current files
 			//filter out only the files within the current directory (as shown by current prefix === currentDir)
@@ -101,16 +141,16 @@ export default new Vuex.Store({
 			state.attemptCounter = state.attemptCounter + 1
 			try {
 				commit('setLoadingFiles');
-				console.log('getting files');
-				const res = await fetch(backendURL + '/files');
+				console.log('getting files for folder ' + folderName);
+				const res = await fetch(backendURL + '/files?folder=' + folderName);
 				console.log(res);
 				const parsed_json = await res.json();
 				var files = parsed_json.files;
 				console.log(files);
 				//.filter((file) => (file.indexOf('.bzEmpty') === -1))
 				console.log(parsed_json);
-				files = files.filter((file) => ((file.fileName.indexOf('.bzEmpty') === -1)) 
-					&& file.fileName.indexOf(folderName) === 0)
+				files = files.filter((file) => ((file.fileName.indexOf('.bzEmpty') === -1))) 
+					//&& file.fileName.indexOf(folderName) === 0)
 				commit('setFiles', files);
 				if (files.length < 1 && state.attemptCounter < 3) {
 					dispatch('getFiles');

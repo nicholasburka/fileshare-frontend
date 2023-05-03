@@ -1,39 +1,58 @@
 <template>
+
   <div id="app">
+
     <title>chris' files for you</title>
     <link rel="stylesheet" type="text/css" href="./icofont/icofont.min.css">
     <a href="https://files.chrisbankscarr.com/">
     <img id="logo" src="//images.squarespace-cdn.com/content/v1/5fdc1dd2ff99f865bfeb9467/1608267602186-4JQBHLKKKIV3PQAHY4DC/mockup+name.png?format=1000w"/>
     </a>
+
     <div v-if="!loaded">
       <p>loading...</p>
     </div>
+
     <div v-else>
       <div id="nav">
         
         <input id="searchField" v-model="search" type="text" name="search" placeholder="search">
-        <span class="icofont-search button" id="submitSearch" v-on:click="$store.commit('searchFiles', search)"></span>
-        <span class="icofont-close-line button" id="dismissSearch" v-on:click="dismissSearch()"></span>
-        <span class="nav icofont-arrow-left button page-button" id="prev" :ref="'prev'" v-on:click="$store.commit('prevFiles')"></span>
+        <span id="submitSearch" class="icofont-search button"  v-on:click="$store.commit('searchFiles', search)"></span>
+        <span id="dismissSearch" class="icofont-close-line button"  v-on:click="dismissSearch()"></span>
+
+        <span id="prev" class="nav icofont-arrow-left button page-button" :ref="'prev'" v-on:click="$store.commit('prevFiles')"></span>
         <p id="file-count" v-if="loaded">showing {{currentFiles.length}} of {{$store.getters.numFiles}} files</p>
-        <span class="nav icofont-arrow-right button page-button" id="next" :ref="'next'" v-on:click="$store.commit('nextFiles')"></span>
+        <span id="next" class="nav icofont-arrow-right button page-button"  :ref="'next'" v-on:click="$store.commit('nextFiles')"></span>
 
       </div>
 
       <div id="files" class="column">
+
         <div class="file row" :key="file" v-for="file in currentFiles" :id="file">
-          <!--<p v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</p>-->
-          <!--<a v-on:click="if (!clicked[file]){$store.dispatch('downloadFile', file); clicked[file] = true; }" v-bind:id="file" v-bind:class="{clicked: clicked[file]}">{{file}}</a>-->
-          <!--<button class="icofont-play" v-on:click="loadAudioSource(file)"></button>-->
-          <div class="icon-holder" :id="file + 'icon-holder'" :ref="file + 'icon-holder'">
-            <span class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)" alt="play"></span>
-            <span class="" :id="file + 'loading'" :ref="file + 'loading'" alt="loading"></span>
+
+          <div :id="file + 'icon-holder'" class="icon-holder" :ref="file + 'icon-holder'">
+            <span :id="file + 'play'" class="icofont-play play-icon song-left" :ref="file + 'play'" v-on:click="loadAudioSource(file)" alt="play"></span>
+            <span :ref="file + 'loading'" class="" :id="file + 'loading'"  alt="loading"></span>
           </div>
-          <a
-            class="file"
+          
+          <a v-if="!fileMetadata[file].title"
             :href="baseURL + file"
+            class="file"
             v-text="file"
-            @click.prevent="downloadItem({url: file, label: file})" />
+            @click.prevent="downloadItem({url: file})" />
+          <div v-else>
+            <a
+              :href="baseURL + file"
+              class="file"
+              v-text="fileMetadata[file].title"
+              @click.prevent="loadAudioSource(file)" />
+            <span style="font-size: var(--size)"> - </span>
+            <a
+              :href="fileMetadata[file].artistLink"
+              class="file"
+              v-text="fileMetadata[file].artist"
+              target="_blank"/>
+          </div>
+
           <mini-audio class="mini-audio audio-off" :ref="file + 'player'" :preload="false" :audio-source="baseURL + file"></mini-audio>
 
         </div>
@@ -48,7 +67,7 @@
 
 <script>
 import {mapState} from 'vuex' //access state variables from the vuex 'store'
-import Spinner from './components/Spinner.vue' //vue css loading icon
+import Spinner from './Spinner.vue' //vue css loading icon
 //import VueAudio from 'vue-audio-better'
 import Vue from 'vue' //front-end web development framework
 import Plyr from 'plyr' //web audio player
@@ -66,6 +85,7 @@ export default {
       loading_files: state => state.loadingFiles,
       files: state => state.files,
       fileNames: state => state.fileNames,
+      fileMetadata: state => state.fileMetadata,
       currentFiles: state => state.currentFiles,
       numPages: state => state.files.length/state.numToDisplay
     }),
@@ -77,13 +97,19 @@ export default {
       return clicked
     },
     loaded: function() {
+      console.log(this.fileMetadata)
       return (!this.loading && !this.loading_files);
     }
   },
   data: function() {
     return {
       loading: true,
-      baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
+      folderToURL: {
+        'chris': 'parnhash/',
+        'sxsw': 'sxsw-2023/'
+      },
+      //folderName: 'sxsw',
+      baseURL: 'https://f000.backblazeb2.com/file/',
       search: '',
       song_playing: '',
       song_loading: ''
@@ -96,12 +122,10 @@ export default {
       this.search = '';
       this.$store.commit('dismissSearch', this.search);
     },
-    downloadItem ({ url }) { //,label}) {
+    downloadItem ({ url }) { 
       /*console.log("download");
-      console.log(url);
-      console.log(label);*/
-      window.open(this.baseURL + encodeURIComponent(url), '_blank').focus();
-      //open url in new tab
+      console.log(url);*/
+      window.open(this.baseURL + encodeURIComponent(url), '_blank').focus(); //open url in new tab
       },
     toPlayState (url) {
       this.$refs[url + 'icon-holder'].replaceChildren()
@@ -134,10 +158,36 @@ export default {
         case 'mp3':
           filetype_html = 'audio/mpeg';
           break;
+        case 'mpg':
+        case 'peg':
+          filetype_html = 'audio/mpeg';
+          break;
+        case 'ogg':
+        case 'oga':
+          filetype_html = 'audio/ogg';
+          break;
+        case 'aac':
+          filetype_html = 'audio/aac';
+          break;
+        case 'flac':
+          filetype_html = 'audio/flac';
+          break;
+        case 'm4a':
+          filetype_html = 'audio/mp4';
+          break;
         /*case 'm4a':
           filetype_html = "audio/x-m4a";
           break;*/
         case 'mp4':
+        case 'm4v':
+        case 'm4p':
+          //video/mp4
+          //open the video player
+          this.downloadItem({url: orig_url});
+          this.pauseAudio();
+          this.clearLastPlaying();
+          return;
+        case 'MOV':
           this.downloadItem({url: orig_url});
           this.pauseAudio();
           this.clearLastPlaying();
@@ -147,21 +197,26 @@ export default {
           this.pauseAudio();
           this.clearLastPlaying();
           return;
+        case 'png':
+          this.downloadItem({url: orig_url});
+          this.pauseAudio();
+          this.clearLastPlaying();
+          return;
         default:
-          console.log('unrec filetype');
-          filetype_html = "audio/x-" + url.substr(url.length - 3, url.length);
-          //this.downloadItem(url);
+          this.downloadItem({url: orig_url});
+          this.pauseAudio();
+          this.clearLastPlaying();
+          return;
       }
 
-      //var loading = document.getElementById(url + "loading");
-      //loading.className = "lds-spinner"
       var spinner = new SpinnerClass();
       spinner.$mount();
-      //document.body.appendChild(spinner.$el);
       console.log(spinner.$el)
       console.log(this.$refs[url + 'loading'][0]);
 
+      
       if (this.song_playing) {
+        //if the song is already playing
         if (this.song_playing === url) {
           var curr_play_button = document.getElementById(this.song_playing + 'play');
           if (curr_play_button.classList.contains('playing')) {
@@ -172,7 +227,7 @@ export default {
             this.playAudio();
           }
         }
-        this.clearLastPlaying();
+        this.clearLastPlaying(); //clear play state classnames
       }
 
       if (this.song_loading) {
@@ -184,18 +239,11 @@ export default {
       this.song_loading = url;
 
 
-
-      var file_div = document.getElementById(url + 'icon-holder');
+      //var file_div = document.getElementById(url + 'icon-holder');
       var play_button = document.getElementById(url + 'play');
       play_button.classList.add('off');
-      //var audio_player = this.$refs[url + 'player'][0];
-      //audio_player.$el.classList.remove('audio-off');
-      //audio_player.play();
-      //console.log(audio_player);
       var player_el = document.getElementById('player');
       var source = document.createElement('source');
-      
-      
       
       console.log('full src: ' + full_src);
       console.log(filetype_html);
@@ -223,35 +271,33 @@ export default {
         //play_button.classList.add('paused');
         //this.song_playing = '';
       };
-      //player_el.
-
-      player.source = {
-        type: 'audio',
-        /*sources: player.sources.push({
-          src: full_src,
-          type: file_type_html
-        })*/
-        sources: [
-          {
-            src: full_src,
-            type: filetype_html
-          }
-        ]
-      };
-      player.on('canplay', (event) => {
-        console.log('can play');
-        console.log(event);
-        player.play();
-        this.$refs[url + 'loading'][0].removeChild(spinner.$el);
-        play_button.classList.add('playing');
-        file_div.appendChild(play_button);
-        this.song_playing = url;
-      });
       
+    },
+    folderNameF: function() {
+      const pathname = window.location.pathname;
+      var index = 1;
+      const folder_str = 'folder/';
+      var folder_idx = pathname.indexOf(folder_str);
+      if (folder_idx >= 0) {
+        index += folder_idx + folder_str.length;
+      }
+      return pathname.substr(index);
     }
   },
   created() {
-    this.$store.dispatch('getFiles');
+    //unused router stuff
+    //const pathname = window.location.pathname;
+    /*var index = 1;
+    const folder_str = 'folder/';
+    var folder_idx = pathname.indexOf(folder_str);
+    if (folder_idx >= 0) {
+      index += folder_idx + folder_str.length;
+    }*/
+    //this.folderName = pathname.substr(index);
+
+    let folder_name_lc = this.folderName.toLowerCase()
+    this.baseURL = 'https://f000.backblazeb2.com/file/' + this.folderToURL[folder_name_lc];
+    this.$store.dispatch('getFolderFiles', folder_name_lc);
     setTimeout(() => {if (this.loading) {location.reload()}}, 40000);
   },
   mounted() {

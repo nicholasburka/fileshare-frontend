@@ -8,249 +8,77 @@
 
     <div>
 
-      <div id="folders" class="column">
+      <div id="folders" class="column" v-if="!folderSelected">
         <div class="folder row" :key="folder" v-for="folder in folders" :id="folder">
-          <img v-if="folder.img" :src="folder.img">
-          <h2 v-else v-text="folder.name"></h2>
-          <!--
-          <div class="icon-holder" :id="folder + 'icon-holder'" :ref="file + 'icon-holder'">
-            <span class="icofont-play play-icon song-left" :id="file + 'play'" :ref="file + 'play'" v-on:click="loadAudioSource(file)" alt="play"></span>
-            <span class="" :id="file + 'loading'" :ref="file + 'loading'" alt="loading"></span>
-          </div>
-          <a
-            class="file"
-            :href="baseURL + file"
-            v-text="file"
-            @click.prevent="downloadItem({url: file, label: file})" />
-          <mini-audio class="mini-audio audio-off" :ref="file + 'player'" :preload="false" :audio-source="baseURL + file"></mini-audio>-->
-
+          <img v-if="folder.img" :src="folder.img" :alt="folder.alt" v-on:click="toFolder(folder.name)">
+          <h2 v-else v-text="folder.alt" v-on:click="toFolder(folder.name)"></h2>
         </div>
       </div>
+      <div v-else>
+        <FolderContents :folderName="this.clickedFolder"></FolderContents>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
-//import {mapState} from 'vuex' //access state variables from the vuex 'store'
-import Spinner from './components/Spinner.vue' //vue css loading icon
-//import VueAudio from 'vue-audio-better'
-import Vue from 'vue' //front-end web development framework
-import Plyr from 'plyr' //web audio player
-const player = new Plyr('#player');
-
-//https://css-tricks.com/creating-vue-js-component-instances-programmatically/
-var SpinnerClass = Vue.extend(Spinner);
-//var AudioClass = Vue.extend(VueAudio);
+const sxsw_img = require('./assets/sxsw-big.png')
+const chris_img = require('./assets/chris-big.png')
 document.title = "chris' files for you"
+import FolderContents from './components/FolderContents.vue'
 
 export default {
   name: 'App',
   components: {
+    FolderContents
   },
   data: function() {
     return {
       loading: true,
-      baseURL: 'https://f000.backblazeb2.com/file/parnhash/',
+      baseURL: 'files.chrisbankscarr.com/',
       search: '',
       song_playing: '',
       song_loading: '',
       folders: [{
-        name: "SXSW Music Exchange",
-        img: require('./assets/sxsw-big.png')
+        name: "SXSW",
+        alt: "SXSW Music Exchange",
+        img: sxsw_img
       }, {
-        name: "Chris' files"
-      }]
+        name: "chris",
+        alt: "Chris' Files",
+        img: chris_img
+      }],
+      folderSelected: false,
+      clickedFolder: ''
       //clicked: {}
     }
   },
   methods: {
-    //https://stackoverflow.com/questions/53772331/vue-html-js-how-to-download-a-file-to-browser-using-the-download-tag
-    dismissSearch() {
-      this.search = '';
-      this.$store.commit('dismissSearch', this.search);
-    },
-    downloadItem ({ url }) { //,label}) {
-      /*console.log("download");
-      console.log(url);
-      console.log(label);*/
-      window.open(this.baseURL + encodeURIComponent(url), '_blank').focus();
-      //open url in new tab
-      },
-    toPlayState (url) {
-      this.$refs[url + 'icon-holder'].replaceChildren()
-    },
-    playAudio() {
-      var curr_player_el = document.getElementById('player');
-      curr_player_el.play();
-    },
-    pauseAudio() {
-      var curr_player_el = document.getElementById('player');
-      curr_player_el.pause();
-    },
-    clearLastPlaying() {
-      var last_play_button = document.getElementById(this.song_playing + 'play');
-      last_play_button.classList.remove('playing');
-      last_play_button.classList.remove('paused');
-    },
-    loadAudioSource (url) {
-      console.log("load media");
-      var orig_url = url;
-      console.log(url);
-
-      const full_src = this.baseURL + encodeURIComponent(url);
-      const url_filetype = url.substr(url.length - 3, url.length);
-      var filetype_html = '';
-      switch (url_filetype) {
-        case 'wav':
-          filetype_html = 'audio/x-wav';
-          break;
-        case 'mp3':
-          filetype_html = 'audio/mpeg';
-          break;
-        /*case 'm4a':
-          filetype_html = "audio/x-m4a";
-          break;*/
-        case 'mp4':
-          this.downloadItem({url: orig_url});
-          this.pauseAudio();
-          this.clearLastPlaying();
-          return;
-        case 'jpg':
-          this.downloadItem({url: orig_url});
-          this.pauseAudio();
-          this.clearLastPlaying();
-          return;
-        default:
-          console.log('unrec filetype');
-          filetype_html = "audio/x-" + url.substr(url.length - 3, url.length);
-          //this.downloadItem(url);
+    toFolder: function(folderName) {
+      this.clickedFolder = folderName;
+      this.folderSelected = true;
+      window.history.pushState('', folderName + ' files', '/' + folderName);
+      window.onpopstate = function(e) {
+        console.log("pop state");
+        console.log(e);
+        this.folderSelected = false;
+        this.clickedFolder = '';
+        window.location.reload();
       }
-
-      //var loading = document.getElementById(url + "loading");
-      //loading.className = "lds-spinner"
-      var spinner = new SpinnerClass();
-      spinner.$mount();
-      //document.body.appendChild(spinner.$el);
-      console.log(spinner.$el)
-      console.log(this.$refs[url + 'loading'][0]);
-
-      if (this.song_playing) {
-        if (this.song_playing === url) {
-          var curr_play_button = document.getElementById(this.song_playing + 'play');
-          if (curr_play_button.classList.contains('playing')) {
-            this.pauseAudio();
-            curr_play_button.classList.remove('playing');
-            curr_play_button.classList.add('paused');
-          } else {
-            this.playAudio();
-          }
-        }
-        this.clearLastPlaying();
-      }
-
-      if (this.song_loading) {
-        this.$refs[this.song_loading + 'loading'][0].innerHTML = '';
-        this.$refs[this.song_loading + 'play'][0].classList.remove('playing');
-        this.$refs[this.song_loading + 'play'][0].classList.remove('off');
-      }
-      this.$refs[url + 'loading'][0].appendChild(spinner.$el);
-      this.song_loading = url;
-
-
-
-      var file_div = document.getElementById(url + 'icon-holder');
-      var play_button = document.getElementById(url + 'play');
-      play_button.classList.add('off');
-      //var audio_player = this.$refs[url + 'player'][0];
-      //audio_player.$el.classList.remove('audio-off');
-      //audio_player.play();
-      //console.log(audio_player);
-      var player_el = document.getElementById('player');
-      var source = document.createElement('source');
-      
-      
-      
-      console.log('full src: ' + full_src);
-      console.log(filetype_html);
-      console.log(player);
-
-      source.src = full_src;
-      source.type = filetype_html;
-      player_el.replaceChildren(source);
-      player_el.pause();
-      player_el.load();
-      player_el.autoplay = true;
-      player_el.oncanplay = () => {
-        player_el.play();
-        
-        this.$refs[url + 'loading'][0].removeChild(spinner.$el);
-        this.song_loading = '';
-
-        play_button.classList.add('playing');
-        play_button.classList.remove('off');
-        
-        this.song_playing = url;
-      };
-      player_el.onended = () => {
-        //play_button.classList.remove('playing');
-        //play_button.classList.add('paused');
-        //this.song_playing = '';
-      };
-      //player_el.
-
-      player.source = {
-        type: 'audio',
-        /*sources: player.sources.push({
-          src: full_src,
-          type: file_type_html
-        })*/
-        sources: [
-          {
-            src: full_src,
-            type: filetype_html
-          }
-        ]
-      };
-      player.on('canplay', (event) => {
-        console.log('can play');
-        console.log(event);
-        player.play();
-        this.$refs[url + 'loading'][0].removeChild(spinner.$el);
-        play_button.classList.add('playing');
-        file_div.appendChild(play_button);
-        this.song_playing = url;
-      });
-      
-    }
+    },
   },
   created() {
-    this.$store.dispatch('getFiles');
-    setTimeout(() => {if (this.loading) {location.reload()}}, 40000);
+    //this.$store.dispatch('getFiles');
+    //setTimeout(() => {if (this.loading) {location.reload()}}, 40000);
   },
   mounted() {
-    //console.log('mounted');
-    this.$nextTick(function() {
-      //console.log('mounted next tick');
-      this.loading = false;
-      //too early in vue lifecycle for file count check
-    })
+
   },
   updated() {
-    //console.log('updated');
-    if (this.currentFiles.length === this.$store.getters.numFiles) {
-      console.log('displaying all files');
-      //console.log(this.$refs['prev']);
-      //console.log(this.$refs);
-      document.getElementById('prev').classList.add('off');
-      document.getElementById('next').classList.add('off');
-      //this.$refs['prev'].classList.add('off');
-      //this.$refs['next'].classList.add('off');
-    } else {
-      //console.log(this.currentFiles.length);
-      //console.log(this.$store.getters.numFiles);
-    }
   }
 }
+
 </script>
 
 <style>
@@ -299,130 +127,9 @@ a {
   /*max-width: 90vw;*/
   /*left: 5vw;*/
   top: 20vh;
-  height: 55vh;
+  height: 65vh;
   justify-content: space-between;
   overflow-y: auto;
-}
-.off {
-  display: none !important;
-}
-.nav {
-  position: absolute;
-  top: 0vh;
-  padding-top: 2vh;
-  max-height: 20vh;
-  font-size: 10vh;
-  display: flex;
-  align-items: center;
-  transition: color .4s;
-}
-.nav:hover {
-  transition: .3s;
-  color: purple;
-}
-div .icon-holder {
-  display: inline;
-}
-#player-div {
-  position: absolute;
-  top: 78vh;
-  left: 5vw;
-  max-height: 14vh;
-}
-audio {
-  width: 90vw;
-  height: 12vh;
-}
-.page-button {
-
-}
-#prev {
-  font-size: min(10vh, 10vw);
-  left: calc(22vw - min(3vh,3vw));
-  top: 10vh;
-  z-index: 1;
-}
-#next {
-  font-size: min(10vh, 10vw);
-  left: calc(78vw - min(5vh,5vw));
-  top: 10vh;
-  z-index: 1;
-}
-#file-count {
-  position: absolute;
-  text-align: center;
-  top: calc(10.5vh - min(3.5vh,5.5vw));
-  left: 5vw;
-  width: 90vw;
-  color: rgb(195,68,122);
-  font-size: min(4vh,4vw);
-  z-index: -1;
-}
-#searchField {
-  position: absolute;
-  left: 30vw;
-  width: 40vw;
-  height: 6vh;
-  top: 1vh;
-  text-align: center;
-  font-size: min(6vh, 8vw);
-}
-#submitSearch {
-  position: absolute;
-  font-size: min(8vh, 9vw);
-  top: 2.5vh;
-  left: calc(72vw + min(5vh, 4vw));
-}
-#dismissSearch {
-  position: absolute;
-  font-size: min(8vh, 9vw);
-  top: 2.5vh;
-  left: calc(73vw + min(15vh, 15vw));
-}
-@media (max-width: 500px) {
-  #file-count {
-    top: calc(7.5vh + min(4vh,4vw));
-  }
-  #submitSearch {
-    left: calc(75vw + min(5vh, 4vw));
-  }
-  #dismissSearch {
-    left: calc(86vw + min(5vh, 4vw));
-  }
-  #player-div {
-    top: 73vh;
-  }
-}
-.audio-off {
-  display: none !important;
-}
-.play-icon {
-  height: var(--icon-size);
-  font-size: var(--icon-size);
-  top: 1vh;
-}
-.playing {
-  transition: .5s;
-  /*filter: invert(100%);*/
-  animation: 5s linear infinite playing;
-}
-.paused {
-  transition: .5s;
-  color: green;
-}
-@keyframes playing {
-  0% {
-   color: white;
-  }
-  50% {
-    color: green;
-  }
-  100% {
-    color: white;
-  }
-}
-.song-left {
-  margin-right: 1vh;
 }
 .folder {
   /*height: 10vw;*/
@@ -434,41 +141,17 @@ audio {
   text-align: center;
   text-decoration: none;
   color: purple;
+  font-size: max(2vw, 5vh);
+}
+.folder img {
+  max-width: 80vw;
+  height: auto;
+  /*align-items: center;*/
+  object-fit: contain;
 }
 .folder:hover {
   transition: .5s;
   color: white;
-  background-color: maroon;
-}
-.clicked {
-  animation: glow 2s repeat;
-}
-.button {
-  background-color: hsla(300,100,100,10);
-  color: black;
-  transition: color .4s;
-}
-.button:hover {
-  transition: 1s;
-  color: orange;
-}
-
-.mini-audio {
-  position: relative;
-  width: 30vw;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  left: 34.5vw;
-  max-height: 10vh !important;
-  max-width: 30vw !important;
-}
-
-@keyframes glow {
-  0% {
-    color: black;
-  }
-  50% {
-    color: purple;
-  }
+  background-color: #29adff;
 }
 </style>

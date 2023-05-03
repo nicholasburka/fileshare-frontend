@@ -18,11 +18,13 @@
 <script>
 	export default {
 		props: ["file"],
-		data: {
+		data: function() {
+return {
 			'playable': true,
 			'loading': false,
 			'playing': false
-		}
+		};
+}
 	}
 </script>
 
