@@ -7,7 +7,7 @@ main.js
 ->
 App.vue
 -> 
-FolderContents.vue -> store/index.js, File.vue, Spinner.vue
+components/FolderContents.vue -> store/index.js, components/File.vue, components/Spinner.vue
 
 Other files awaiting refactor
 
