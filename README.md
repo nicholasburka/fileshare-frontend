@@ -1,5 +1,5 @@
 # frontend for indie artist file-sharing webapp
-# live at [files.chrisbankscarr.com](files.chrisbankscarr.com)
+# live at [files.chrisbankscarr.com](https://files.chrisbankscarr.com)
 
 Source structure:
 src/
